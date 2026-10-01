@@ -147,75 +147,6 @@ footer.scroll-reveal{transition-delay:.12s}
 }
 </style>
 
-
-<style id="mobile-compatible-static-background">
-/* Static iceberg background — optimized for Android + iOS */
-html,body{
-  background:#080813 !important;
-}
-body{
-  position:relative;
-  isolation:isolate;
-  overflow-x:hidden;
-}
-body::before{
-  content:"";
-  position:fixed;
-  inset:0;
-  z-index:-10;
-  pointer-events:none;
-  background:
-    linear-gradient(180deg,rgba(8,8,19,.34) 0%,rgba(8,8,19,.58) 42%,rgba(8,8,19,.94) 100%),
-    linear-gradient(90deg,rgba(8,8,19,.48) 0%,rgba(8,8,19,.16) 48%,rgba(8,8,19,.52) 100%),
-    url("iceberg-hero.webp") center center / cover no-repeat,
-    #080813;
-  transform:none !important;
-  animation:none !important;
-  will-change:auto;
-  -webkit-transform:none !important;
-  -webkit-backface-visibility:hidden;
-  backface-visibility:hidden;
-}
-main,.nav{
-  position:relative;
-  z-index:2;
-}
-
-/* Mobile browsers: use the visual viewport units and keep the image fixed. */
-@media (max-width:700px){
-  body::before{
-    position:fixed;
-    inset:0;
-    width:100vw;
-    height:100vh;
-    height:100svh;
-    min-height:100svh;
-    background-position:center center;
-    background-size:cover;
-    background-attachment:initial;
-  }
-}
-
-/* iOS Safari */
-@supports (-webkit-touch-callout:none){
-  body::before{
-    position:fixed;
-    inset:0;
-    height:100svh;
-    background-attachment:initial;
-  }
-}
-
-/* Never introduce motion for the background. */
-.iceberg-motion{
-  position:fixed !important;
-  inset:0 !important;
-  transform:none !important;
-  animation:none !important;
-  background-attachment:initial !important;
-}
-</style>
-
 </head>
 <body>
 
@@ -304,10 +235,10 @@ main,.nav{
   </section>
 
   <footer class="scroll-reveal">
-    <img src="telegram.png" alt="">
+    <img src="logo.png" alt="">
     <div>
-      <strong>Designed by 𝐑𝐄𝐙𝐀 𝕏 </strong>
-      <span> Reeza_X@ </span>
+      <strong>عباسی‌نژاد</strong>
+      <span>© 2026 — تمامی حقوق محفوظ است.</span>
     </div>
   </footer>
 </main>
