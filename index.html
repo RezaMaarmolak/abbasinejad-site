@@ -28,25 +28,6 @@ footer.scroll-reveal{transition-delay:.12s}
 </style>
 
 
-<style id="iceberg-parallax">
-.iceberg-motion{
-  position:fixed;inset:-7%;z-index:0;pointer-events:none;
-  background:
-    linear-gradient(180deg,rgba(8,8,19,.34) 0%,rgba(8,8,19,.56) 38%,rgba(8,8,19,.93) 100%),
-    linear-gradient(90deg,rgba(8,8,19,.48) 0%,rgba(8,8,19,.20) 48%,rgba(8,8,19,.52) 100%),
-    url("iceberg-hero.webp") center center / cover no-repeat,
-    #080813;
-  transform:translate3d(0,var(--ice-y,0px),0) scale(var(--ice-scale,1.055));
-  transform-origin:center center;
-  will-change:transform;
-}
-body{background:#080813!important}
-main,.nav{position:relative;z-index:2}
-body:before{z-index:1!important}
-@media(max-width:700px){.iceberg-motion{inset:-9%;transform:translate3d(0,var(--ice-y,0px),0) scale(var(--ice-scale,1.075));}}
-@media(prefers-reduced-motion:reduce){.iceberg-motion{transform:scale(1.03)}}
-</style>
-
 <style id="true-liquid-glass">
 /* True Liquid Glass treatment — inspired by the supplied references */
 .glass{
@@ -168,7 +149,6 @@ body:before{z-index:1!important}
 
 </head>
 <body>
-<div class="iceberg-motion" aria-hidden="true"></div>
 
 <div class="bg-glow glow-1"></div>
 <div class="bg-glow glow-2"></div>
@@ -331,37 +311,6 @@ document.addEventListener("DOMContentLoaded",function(){
 
 
 <!-- Scroll hint -->
-<script id="iceberg-parallax-script">
-(function(){
-  const root=document.documentElement;
-  if(window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-  let target=0,current=0,velocity=0,lastY=window.scrollY,lastT=performance.now();
-  let raf=0;
-  function onScroll(){
-    const y=window.scrollY;
-    const delta=y-lastY;
-    const now=performance.now();
-    const dt=Math.max(8,now-lastT);
-    velocity=delta/dt;
-    target=Math.max(-70,Math.min(70,-y*0.10));
-    lastY=y;lastT=now;
-    if(!raf) raf=requestAnimationFrame(tick);
-  }
-  function tick(){
-    current += (target-current)*0.075;
-    const pulse=Math.max(-1,Math.min(1,velocity*12));
-    const scale=1.055 + Math.abs(pulse)*0.008;
-    root.style.setProperty('--ice-y',current.toFixed(2)+'px');
-    root.style.setProperty('--ice-scale',scale.toFixed(4));
-    velocity*=0.88;
-    if(Math.abs(target-current)>0.05 || Math.abs(velocity)>0.002){raf=requestAnimationFrame(tick)}
-    else {raf=0;root.style.setProperty('--ice-y',target.toFixed(2)+'px');root.style.setProperty('--ice-scale','1.055')}
-  }
-  window.addEventListener('scroll',onScroll,{passive:true});
-  tick();
-})();
-</script>
-
 <div class="scroll-hint" aria-hidden="true">
 <span class="scroll-hint-arrow"><span></span><span></span><span></span></span></div>
 <style>
