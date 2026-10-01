@@ -7,6 +7,28 @@
 <meta name="description" content="ارتباط با مهندس عرفان عباسی نژاد و پشتیبانی">
 <title>مهندس عرفان عباسی‌نژاد | ارتباط مستقیم</title>
 <link rel="stylesheet" href="style.css">
+
+<style id="content-protection">
+  /* جلوگیری از انتخاب و Drag معمولی محتوا */
+  html, body, body * {
+    -webkit-user-select: none !important;
+    user-select: none !important;
+    -webkit-touch-callout: none !important;
+  }
+
+  img {
+    -webkit-user-drag: none !important;
+    user-drag: none !important;
+    pointer-events: none;
+  }
+
+  /* لینک‌ها همچنان قابل کلیک باشند */
+  a {
+    -webkit-user-select: none !important;
+    user-select: none !important;
+  }
+</style>
+
 </head>
 <body>
 
@@ -17,7 +39,7 @@
 
 <header class="nav glass">
   <a class="brand" href="#">
-    <img src="logo.png" alt="لوگوی مجموعه">
+    <img src="logo.png" alt="لوگوی مجموعه" draggable="false">
     <span>مهندس عرفان عباسی‌نژاد | مشاوره تحصیلی</span>
   </a>
 </header>
@@ -26,13 +48,13 @@
   <section class="hero">
     <div class="hero-doctor glass">
       <div class="doctor-glow"></div>
-      <img src="doctor.png" alt="مهندس عرفان عباسی‌نژاد">
+      <img src="doctor.png" alt="مهندس عرفان عباسی‌نژاد" draggable="false">
     </div>
 
     <h1>مهندس عرفان<br><strong>عباسی‌نژاد</strong></h1>
 
     <a class="call-main" href="tel:+989147142506">
-      <img src="phone.png" alt="">
+      <img src="phone.png" alt="" draggable="false">
       <span>تماس مستقیم با مهندس عباسی‌نژاد</span>
       <b>←</b>
     </a>
@@ -63,7 +85,7 @@
 
     <div class="contact-grid">
       <a class="contact-card glass" href="tel:+989358762506">
-        <div class="icon-wrap phone-wrap"><img src="phone.png" alt=""></div>
+        <div class="icon-wrap phone-wrap"><img src="phone.png" alt="" draggable="false"></div>
         <div class="card-text">
           <small>پشتیبانی</small>
           <strong>شماره پشتیبانی</strong>
@@ -73,7 +95,7 @@
       </a>
 
       <a class="contact-card glass" href="https://t.me/abbasinejad_adviser" target="_blank" rel="noopener">
-        <div class="icon-wrap telegram-wrap"><img src="telegram.png" alt=""></div>
+        <div class="icon-wrap telegram-wrap"><img src="telegram.png" alt="" draggable="false"></div>
         <div class="card-text">
           <small>Telegram</small>
           <strong>تلگرام</strong>
@@ -83,7 +105,7 @@
       </a>
 
       <a class="contact-card glass" href="https://www.instagram.com/abbasinejad_adviser" target="_blank" rel="noopener">
-        <div class="icon-wrap instagram-wrap"><img src="instagram.png" alt=""></div>
+        <div class="icon-wrap instagram-wrap"><img src="instagram.png" alt="" draggable="false"></div>
         <div class="card-text">
           <small>Instagram</small>
           <strong>اینستاگرام</strong>
@@ -95,13 +117,53 @@
   </section>
 
   <footer>
-    <img src="logo.png" alt="">
+    <img src="logo.png" alt="" draggable="false">
     <div>
       <strong>عباسی‌نژاد</strong>
       <span>© 2026 — تمامی حقوق محفوظ است.</span>
     </div>
   </footer>
 </main>
+
+
+<script id="content-protection-script">
+(function () {
+  // جلوگیری از منوی راست‌کلیک
+  document.addEventListener("contextmenu", function (e) {
+    e.preventDefault();
+  }, { passive: false });
+
+  // جلوگیری از انتخاب/کپی/برش/Drag
+  ["copy", "cut", "dragstart", "selectstart"].forEach(function (eventName) {
+    document.addEventListener(eventName, function (e) {
+      e.preventDefault();
+    }, { passive: false });
+  });
+
+  // جلوگیری از میانبرهای رایج ذخیره، View Source، چاپ و DevTools
+  document.addEventListener("keydown", function (e) {
+    const key = String(e.key).toLowerCase();
+    const ctrlOrMeta = e.ctrlKey || e.metaKey;
+
+    if (
+      (ctrlOrMeta && ["c", "x", "s", "u", "p"].includes(key)) ||
+      (e.ctrlKey && e.shiftKey && ["i", "j", "c"].includes(key)) ||
+      e.key === "F12"
+    ) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
+  }, true);
+
+  // جلوگیری از Drag تصویر با لمس/ماوس
+  document.querySelectorAll("img").forEach(function (img) {
+    img.setAttribute("draggable", "false");
+    img.addEventListener("dragstart", function (e) {
+      e.preventDefault();
+    });
+  });
+})();
+</script>
 
 <script>
 const quotes = [
