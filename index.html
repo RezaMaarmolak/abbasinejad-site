@@ -148,29 +148,76 @@ footer.scroll-reveal{transition-delay:.12s}
 </style>
 
 
-<style id="iceberg-static">
-/* Cinematic iceberg background — static */
-.iceberg-motion{
-  position:fixed;top:0;left:0;width:100vw;height:100vh;height:100svh;z-index:0;pointer-events:none;
-  transform:translate3d(0,0,0);
-  -webkit-transform:translate3d(0,0,0);
-  will-change:auto;
+<style id="mobile-compatible-static-background">
+/* Static iceberg background — optimized for Android + iOS */
+html,body{
+  background:#080813 !important;
+}
+body{
+  position:relative;
+  isolation:isolate;
+  overflow-x:hidden;
+}
+body::before{
+  content:"";
+  position:fixed;
+  inset:0;
+  z-index:-10;
+  pointer-events:none;
   background:
-    linear-gradient(180deg,rgba(8,8,19,.34) 0%,rgba(8,8,19,.56) 38%,rgba(8,8,19,.93) 100%),
-    linear-gradient(90deg,rgba(8,8,19,.48) 0%,rgba(8,8,19,.20) 48%,rgba(8,8,19,.52) 100%),
+    linear-gradient(180deg,rgba(8,8,19,.34) 0%,rgba(8,8,19,.58) 42%,rgba(8,8,19,.94) 100%),
+    linear-gradient(90deg,rgba(8,8,19,.48) 0%,rgba(8,8,19,.16) 48%,rgba(8,8,19,.52) 100%),
     url("iceberg-hero.webp") center center / cover no-repeat,
     #080813;
+  transform:none !important;
+  animation:none !important;
+  will-change:auto;
+  -webkit-transform:none !important;
+  -webkit-backface-visibility:hidden;
+  backface-visibility:hidden;
 }
-body{background:#080813!important}
-main,.nav{position:relative;z-index:2}
-body:before{z-index:1!important}
-@media(max-width:700px){.iceberg-motion{top:0;left:0;width:100vw;height:100svh;min-height:0;transform:translate3d(0,0,0);-webkit-transform:translate3d(0,0,0);}}
+main,.nav{
+  position:relative;
+  z-index:2;
+}
+
+/* Mobile browsers: use the visual viewport units and keep the image fixed. */
+@media (max-width:700px){
+  body::before{
+    position:fixed;
+    inset:0;
+    width:100vw;
+    height:100vh;
+    height:100svh;
+    min-height:100svh;
+    background-position:center center;
+    background-size:cover;
+    background-attachment:initial;
+  }
+}
+
+/* iOS Safari */
+@supports (-webkit-touch-callout:none){
+  body::before{
+    position:fixed;
+    inset:0;
+    height:100svh;
+    background-attachment:initial;
+  }
+}
+
+/* Never introduce motion for the background. */
+.iceberg-motion{
+  position:fixed !important;
+  inset:0 !important;
+  transform:none !important;
+  animation:none !important;
+  background-attachment:initial !important;
+}
 </style>
 
 </head>
 <body>
-
-<div class="iceberg-motion" aria-hidden="true"></div>
 
 <div class="bg-glow glow-1"></div>
 <div class="bg-glow glow-2"></div>
@@ -347,8 +394,5 @@ document.addEventListener("DOMContentLoaded",function(){
 @media (prefers-reduced-motion:reduce){.scroll-hint{animation:none;opacity:.8}.scroll-hint-arrow span{animation:none;opacity:.8}}
 </style>
 <script>(function(){const hint=document.querySelector('.scroll-hint');if(!hint)return;let hidden=false;function hideHint(){if(hidden)return;hidden=true;hint.style.animation='none';hint.style.opacity='0';hint.style.transition='opacity .18s ease,transform .18s ease';hint.style.transform='translate(-50%,8px)';}window.addEventListener('scroll',function(){if(window.scrollY>0)hideHint();},{passive:true});window.addEventListener('wheel',function(e){if(e.deltaY>0)hideHint();},{passive:true});window.addEventListener('touchmove',function(){if(window.scrollY>0)hideHint();},{passive:true});})();</script>
-
-
-
 </body>
 </html>
