@@ -147,8 +147,27 @@ footer.scroll-reveal{transition-delay:.12s}
 }
 </style>
 
+
+<style id="iceberg-static">
+/* Cinematic iceberg background — static */
+.iceberg-motion{
+  position:fixed;inset:-7%;z-index:0;pointer-events:none;
+  background:
+    linear-gradient(180deg,rgba(8,8,19,.34) 0%,rgba(8,8,19,.56) 38%,rgba(8,8,19,.93) 100%),
+    linear-gradient(90deg,rgba(8,8,19,.48) 0%,rgba(8,8,19,.20) 48%,rgba(8,8,19,.52) 100%),
+    url("iceberg-hero.webp") center center / cover no-repeat,
+    #080813;
+}
+body{background:#080813!important}
+main,.nav{position:relative;z-index:2}
+body:before{z-index:1!important}
+@media(max-width:700px){.iceberg-motion{inset:-8% 0 0;min-height:125vh;background-attachment:scroll;}}
+</style>
+
 </head>
 <body>
+
+<div class="iceberg-motion" aria-hidden="true"></div>
 
 <div class="bg-glow glow-1"></div>
 <div class="bg-glow glow-2"></div>
@@ -325,5 +344,8 @@ document.addEventListener("DOMContentLoaded",function(){
 @media (prefers-reduced-motion:reduce){.scroll-hint{animation:none;opacity:.8}.scroll-hint-arrow span{animation:none;opacity:.8}}
 </style>
 <script>(function(){const hint=document.querySelector('.scroll-hint');if(!hint)return;let hidden=false;function hideHint(){if(hidden)return;hidden=true;hint.style.animation='none';hint.style.opacity='0';hint.style.transition='opacity .18s ease,transform .18s ease';hint.style.transform='translate(-50%,8px)';}window.addEventListener('scroll',function(){if(window.scrollY>0)hideHint();},{passive:true});window.addEventListener('wheel',function(e){if(e.deltaY>0)hideHint();},{passive:true});window.addEventListener('touchmove',function(){if(window.scrollY>0)hideHint();},{passive:true});})();</script>
+
+
+
 </body>
 </html>
