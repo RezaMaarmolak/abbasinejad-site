@@ -2,11 +2,31 @@
 <html lang="fa" dir="rtl">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta name="theme-color" content="#080813">
+<meta name="color-scheme" content="dark">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="عباسی‌نژاد">
+<link rel="apple-touch-icon" href="logo.png">
 <meta name="description" content="ارتباط با مهندس عرفان عباسی نژاد و پشتیبانی">
 <title>مهندس عرفان عباسی‌نژاد | ارتباط مستقیم</title>
 <link rel="stylesheet" href="style.css">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self' data: https:; img-src 'self' data: blob: https:; style-src 'self' 'unsafe-inline' https:; font-src 'self' data: https:; script-src 'self' 'unsafe-inline'; object-src 'none'; base-uri 'self'; form-action 'none'">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<meta name="robots" content="noindex, nofollow, noarchive, noimageindex">
+<meta name="format-detection" content="telephone=no">
+<style id="content-protection">
+html,body,*{-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;-webkit-touch-callout:none;-webkit-tap-highlight-color:transparent}
+img{-webkit-user-drag:none;user-drag:none;pointer-events:none;-webkit-touch-callout:none}
+a{-webkit-user-drag:none;user-drag:none}
+::selection{background:transparent}
+::-moz-selection{background:transparent}
+@media print{html,body{display:none!important;visibility:hidden!important}}
+body.dt-open>*{filter:blur(18px)!important;pointer-events:none!important}
+</style>
+
 
 <style id="reveal-animations">
 .nav{animation:navIn .8s cubic-bezier(.22,1,.36,1) both}
@@ -149,6 +169,12 @@ footer.scroll-reveal{transition-delay:.12s}
 
 </head>
 <body>
+<div class="bg-video" aria-hidden="true">
+  <video id="bgVideo" muted loop playsinline autoplay preload="auto" poster="bg-poster.jpg" disablepictureinpicture disableremoteplayback controlslist="nodownload noremoteplayback">
+    <source src="bg.mp4" type="video/mp4">
+  </video>
+</div>
+
 
 <div class="bg-glow glow-1"></div>
 <div class="bg-glow glow-2"></div>
@@ -157,7 +183,7 @@ footer.scroll-reveal{transition-delay:.12s}
 
 <header class="nav glass">
   <a class="brand" href="#">
-    <img src="logo.png" alt="لوگوی مجموعه">
+    <img draggable="false" oncontextmenu="return false" src="logo.png" alt="لوگوی مجموعه">
     <span>مهندس عرفان عباسی‌نژاد | مشاوره تحصیلی</span>
   </a>
 </header>
@@ -166,13 +192,13 @@ footer.scroll-reveal{transition-delay:.12s}
   <section class="hero">
     <div class="hero-doctor glass">
       <div class="doctor-glow"></div>
-      <img src="doctor.png" alt="مهندس عرفان عباسی‌نژاد">
+      <img draggable="false" oncontextmenu="return false" src="doctor.png" alt="مهندس عرفان عباسی‌نژاد">
     </div>
 
     <h1>مهندس عرفان<br><strong>عباسی‌نژاد</strong></h1>
 
     <a class="call-main" href="tel:+989147142506">
-      <img src="phone.png" alt="">
+      <img draggable="false" oncontextmenu="return false" src="phone.png" alt="">
       <span>تماس مستقیم با مهندس عباسی‌نژاد</span>
       <b>←</b>
     </a>
@@ -203,7 +229,7 @@ footer.scroll-reveal{transition-delay:.12s}
 
     <div class="contact-grid">
       <a class="contact-card glass scroll-reveal" href="tel:+989358762506">
-        <div class="icon-wrap phone-wrap"><img src="phone.png" alt=""></div>
+        <div class="icon-wrap phone-wrap"><img draggable="false" oncontextmenu="return false" src="phone.png" alt=""></div>
         <div class="card-text">
           <small>پشتیبانی</small>
           <strong>شماره پشتیبانی</strong>
@@ -212,8 +238,8 @@ footer.scroll-reveal{transition-delay:.12s}
         <i>↗</i>
       </a>
 
-      <a class="contact-card glass scroll-reveal" href="https://t.me/abbasinejad_adviser" target="_blank" rel="noopener">
-        <div class="icon-wrap telegram-wrap"><img src="telegram.png" alt=""></div>
+      <a class="contact-card glass scroll-reveal" href="https://t.me/abbasinejad_adviser" target="_blank" rel="noopener noreferrer">
+        <div class="icon-wrap telegram-wrap"><img draggable="false" oncontextmenu="return false" src="telegram.png" alt=""></div>
         <div class="card-text">
           <small>Telegram</small>
           <strong>تلگرام</strong>
@@ -222,8 +248,8 @@ footer.scroll-reveal{transition-delay:.12s}
         <i>↗</i>
       </a>
 
-      <a class="contact-card glass scroll-reveal" href="https://www.instagram.com/abbasinejad_adviser" target="_blank" rel="noopener">
-        <div class="icon-wrap instagram-wrap"><img src="instagram.png" alt=""></div>
+      <a class="contact-card glass scroll-reveal" href="https://www.instagram.com/abbasinejad_adviser" target="_blank" rel="noopener noreferrer">
+        <div class="icon-wrap instagram-wrap"><img draggable="false" oncontextmenu="return false" src="instagram.png" alt=""></div>
         <div class="card-text">
           <small>Instagram</small>
           <strong>اینستاگرام</strong>
@@ -235,7 +261,7 @@ footer.scroll-reveal{transition-delay:.12s}
   </section>
 
   <footer class="scroll-reveal">
-    <img src="telegram.png" alt="">
+    <img draggable="false" oncontextmenu="return false" src="telegram.png" alt="">
     <div>
       <strong>Designed by 𝐑𝐄𝐙𝐀 𝕏 </strong>
       <span> Reeza_X@ </span>
@@ -262,6 +288,7 @@ let charIndex = 0;
 let deleting = false;
 
 function typeLoop() {
+  if (document.hidden) { setTimeout(typeLoop, 600); return; }
   const current = quotes[quoteIndex];
 
   if (!deleting) {
@@ -317,27 +344,359 @@ document.addEventListener("DOMContentLoaded",function(){
 .scroll-hint-arrow span:nth-child(1){animation-delay:0s}.scroll-hint-arrow span:nth-child(2){animation-delay:.13s;opacity:.7}.scroll-hint-arrow span:nth-child(3){animation-delay:.26s;opacity:.45}
 @keyframes scrollHintIn{from{opacity:0;transform:translate(-50%,10px)}to{opacity:1;transform:translate(-50%,0)}}
 @keyframes scrollArrow{0%,100%{transform:translateY(2px) rotate(225deg);opacity:.25}50%{transform:translateY(-4px) rotate(225deg);opacity:1}}
-@media(max-width:700px){
-  /* Mobile: keep the glass look, but avoid the browser's backdrop-filter repaint flicker. */
-  .nav{
-    background:
-      linear-gradient(135deg,rgba(18,20,34,.97),rgba(8,8,19,.95));
-    -webkit-backdrop-filter:none;
-    backdrop-filter:none;
-    transform:none;
-    isolation:isolate;
-    overflow:hidden;
-    z-index:1000;
-  }
-  .nav.glass{
-    box-shadow:
-      inset 0 1px 0 rgba(255,255,255,.55),
-      inset 0 -1px 0 rgba(255,255,255,.10),
-      0 10px 30px rgba(0,0,0,.18);
-  }
-}
 @media(prefers-reduced-motion:reduce){.scroll-hint{animation:none;opacity:.8}.scroll-hint-arrow span{animation:none;opacity:.8}}
 </style>
 <script>(function(){const hint=document.querySelector('.scroll-hint');if(!hint)return;let hidden=false;function hideHint(){if(hidden)return;hidden=true;hint.style.transition='opacity .35s ease,transform .35s ease';hint.style.opacity='0';hint.style.transform='translate(-50%,8px)';setTimeout(()=>hint.remove(),400)}window.addEventListener('scroll',function(){if(window.scrollY>0)hideHint()},{passive:true});window.addEventListener('wheel',function(e){if(e.deltaY!==0)hideHint()},{passive:true});window.addEventListener('touchmove',function(){hideHint()},{passive:true});})();</script>
+
+<script id="content-protection-script">
+(function(){
+  "use strict";
+  // Anti-framing (clickjacking)
+  try{ if(window.top!==window.self){ window.top.location=window.self.location; } }catch(e){ document.documentElement.style.display="none"; }
+
+  var stop=function(e){ e.preventDefault(); e.stopPropagation(); return false; };
+  ["contextmenu","selectstart","dragstart","drag","drop","copy","cut","paste","beforecopy","beforecut"].forEach(function(t){
+    document.addEventListener(t, stop, true);
+  });
+  document.addEventListener("copy",function(e){ if(e.clipboardData){ e.clipboardData.setData("text/plain",""); } e.preventDefault(); },true);
+
+  // Block risky keyboard shortcuts
+  document.addEventListener("keydown",function(e){
+    var k=(e.key||"").toLowerCase(), c=e.ctrlKey||e.metaKey;
+    var blocked =
+      e.key==="F12" ||
+      e.key==="PrintScreen" ||
+      (c && ["s","u","p","c","x","a","o"].indexOf(k)>-1) ||
+      (c && e.shiftKey && ["i","j","c","k","s"].indexOf(k)>-1) ||
+      (e.metaKey && e.altKey && ["i","j","c","u"].indexOf(k)>-1);
+    if(blocked){
+      if(e.key==="PrintScreen" && navigator.clipboard){ try{ navigator.clipboard.writeText(""); }catch(_){} }
+      return stop(e);
+    }
+  },true);
+  document.addEventListener("keyup",function(e){
+    if(e.key==="PrintScreen"){ try{ navigator.clipboard.writeText(""); }catch(_){} }
+  },true);
+
+  // Hide content while printing
+  window.addEventListener("beforeprint",function(){ document.body.style.visibility="hidden"; });
+  window.addEventListener("afterprint",function(){ document.body.style.visibility=""; });
+
+
+  // Basic DevTools detection (desktop only): blur page while docked tools are open
+  var isTouch=("ontouchstart" in window)||navigator.maxTouchPoints>0;
+  if(!isTouch){
+    var check=function(){
+      var wGap=window.outerWidth-window.innerWidth>200;
+      var hGap=window.outerHeight-window.innerHeight>200;
+      document.body.classList.toggle("dt-open", wGap||hGap);
+    };
+    setInterval(check,1000); window.addEventListener("resize",check); check();
+  }
+})();
+</script>
+
+
+<style id="liquid-glass-ios">
+/* ================= iOS-style Liquid Glass ================= */
+:root{
+  --lg-blur:24px;
+  --lg-blur-nav:20px;
+  --lg-ease:cubic-bezier(.22,1,.36,1);
+  --lg-spring:cubic-bezier(.34,1.56,.64,1);
+  --lg-rim-hi:rgba(255,255,255,.82);
+  --lg-rim-lo:rgba(255,255,255,.38);
+}
+
+/* ---- base mobile behaviour (fonts untouched) ---- */
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%;background:#080813;touch-action:manipulation}
+body{padding-left:env(safe-area-inset-left,0px);padding-right:env(safe-area-inset-right,0px);padding-bottom:env(safe-area-inset-bottom,0px);overflow-x:hidden}
+a,button{touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+.scroll-hint{bottom:calc(22px + env(safe-area-inset-bottom,0px))}
+@media (max-height:480px) and (orientation:landscape){.scroll-hint{display:none}}
+
+/* ---- keep the glass able to "see" the page behind it ----
+   (a leftover filter/animation fill makes the browser flatten the backdrop and the glass flickers) */
+.nav,.hero-doctor,.hero h1,.call-main{animation-fill-mode:backwards}
+.scroll-reveal.is-visible{filter:none}
+
+/* ---- glass shell: the glass itself lives on ::before / ::after ---- */
+html .glass{
+  background:transparent;
+  border:0;
+  -webkit-backdrop-filter:none;backdrop-filter:none;
+  box-shadow:0 14px 40px rgba(0,0,0,.30),0 2px 8px rgba(0,0,0,.18);
+  isolation:isolate;
+}
+html .glass:not(.nav){position:relative}
+html .glass > *:not(.doctor-glow){position:relative;z-index:1}
+
+/* Layer 1: refractive body = light blur + saturation boost + tint */
+html .glass::before{
+  content:"";position:absolute;inset:0;width:auto;height:auto;
+  border-radius:inherit;z-index:0;pointer-events:none;filter:none;
+  background:
+    radial-gradient(120% 90% at 0% 0%,rgba(255,255,255,.22),transparent 55%),
+    linear-gradient(135deg,rgba(255,255,255,.13),rgba(160,189,219,.045) 50%,rgba(255,255,255,.08));
+  -webkit-backdrop-filter:blur(var(--lg-blur)) saturate(190%) brightness(1.1);
+  backdrop-filter:blur(var(--lg-blur)) saturate(190%) brightness(1.1);
+  -webkit-transform:translateZ(0);transform:translateZ(0);
+}
+/* Layer 2: specular rim + sheen that follows your finger */
+html .glass::after{
+  content:"";position:absolute;inset:0;width:auto;height:auto;
+  border-radius:inherit;z-index:3;pointer-events:none;filter:none;
+  background:
+    radial-gradient(circle 150px at var(--mx,18%) var(--my,0%),rgba(255,255,255,.20),transparent 70%),
+    linear-gradient(180deg,rgba(255,255,255,.10),transparent 42%);
+  box-shadow:
+    inset 1.5px 1.5px 1px -.5px var(--lg-rim-hi),
+    inset -1.5px -1.5px 1px -.5px var(--lg-rim-lo),
+    inset 0 0 0 1px rgba(255,255,255,.09),
+    inset 0 0 28px rgba(255,255,255,.07);
+}
+
+/* ---- top bar: floating glass pill (works on phones too) ---- */
+html .nav{
+  z-index:40;border-radius:34px;overflow:visible;transform:none;
+  box-shadow:0 10px 32px rgba(0,0,0,.32),0 1px 3px rgba(0,0,0,.20);
+}
+html .nav::before{
+  -webkit-backdrop-filter:blur(var(--lg-blur-nav)) saturate(200%) brightness(1.12);
+  backdrop-filter:blur(var(--lg-blur-nav)) saturate(200%) brightness(1.12);
+  transition:background .35s ease;
+}
+html .nav.is-scrolled::before{
+  background:
+    radial-gradient(120% 90% at 0% 0%,rgba(255,255,255,.26),transparent 55%),
+    linear-gradient(135deg,rgba(255,255,255,.17),rgba(160,189,219,.07) 50%,rgba(255,255,255,.12));
+}
+
+
+/* ---- top bar fades away while scrolling down, returns when scrolling up ---- */
+html .nav{
+  transition:opacity .45s var(--lg-ease),transform .45s var(--lg-ease),visibility 0s 0s;
+}
+html .nav.nav-hidden{
+  opacity:0;transform:translateY(-14px);visibility:hidden;pointer-events:none;
+  transition:opacity .45s var(--lg-ease),transform .45s var(--lg-ease),visibility 0s .45s;
+}
+@media (prefers-reduced-motion:reduce){
+  html .nav,html .nav.nav-hidden{transition:opacity .2s linear,visibility 0s .2s;transform:none}
+}
+
+/* ---- doctor photo: glass lens ring ---- */
+html .hero-doctor{box-shadow:0 28px 70px rgba(0,0,0,.42),0 4px 14px rgba(0,0,0,.25)}
+
+/* ---- quote card ---- */
+html .quote-card{border-radius:26px}
+
+/* ---- contact cards ---- */
+html .contact-card{border-radius:34px}
+html .contact-card.scroll-reveal{
+  transition:
+    opacity .8s var(--lg-ease),
+    transform .8s var(--lg-ease),
+    filter .8s ease,
+    scale .5s var(--lg-spring),
+    box-shadow .3s ease;
+}
+/* stagger only the reveal, never the press */
+html .contact-card.scroll-reveal:nth-child(1){transition-delay:.1s,.1s,.1s,0s,0s}
+html .contact-card.scroll-reveal:nth-child(2){transition-delay:.2s,.2s,.2s,0s,0s}
+html .contact-card.scroll-reveal:nth-child(3){transition-delay:.3s,.3s,.3s,0s,0s}
+
+/* ---- glass icon bubbles ---- */
+html .icon-wrap{
+  border:0;
+  background:
+    radial-gradient(circle at 30% 20%,rgba(255,255,255,.34),transparent 45%),
+    linear-gradient(145deg,rgba(255,255,255,.20),rgba(160,189,219,.05));
+  box-shadow:
+    inset 1.5px 1.5px 1px -.5px rgba(255,255,255,.85),
+    inset -1.5px -1.5px 1px -.5px rgba(255,255,255,.40),
+    inset 0 0 0 1px rgba(255,255,255,.12),
+    inset 0 0 16px rgba(255,255,255,.12),
+    0 8px 22px rgba(0,0,0,.30);
+  -webkit-backdrop-filter:blur(8px) saturate(190%) brightness(1.15);
+  backdrop-filter:blur(8px) saturate(190%) brightness(1.15);
+}
+
+/* ---- main call button: tinted glass ---- */
+html .call-main{
+  position:relative;overflow:hidden;border:0;min-height:56px;
+  background:
+    radial-gradient(120% 140% at 0% 0%,rgba(255,255,255,.55),transparent 55%),
+    linear-gradient(135deg,rgba(228,242,255,.62),rgba(160,189,219,.40));
+  -webkit-backdrop-filter:blur(18px) saturate(190%) brightness(1.12);
+  backdrop-filter:blur(18px) saturate(190%) brightness(1.12);
+  box-shadow:
+    inset 1.5px 1.5px 1px -.5px rgba(255,255,255,.95),
+    inset -1.5px -1.5px 1px -.5px rgba(255,255,255,.50),
+    inset 0 0 18px rgba(255,255,255,.18),
+    0 14px 34px rgba(0,0,0,.30),
+    0 0 40px rgba(160,189,219,.14);
+  transition:scale .5s var(--lg-spring),box-shadow .3s ease,filter .3s ease;
+}
+
+/* ---- press feedback: iOS-style squish + spring back ---- */
+html .contact-card.is-pressed,
+html .call-main.is-pressed{scale:.965}
+html .contact-card.is-pressed::after{
+  background:
+    radial-gradient(circle 190px at var(--mx,50%) var(--my,50%),rgba(255,255,255,.32),transparent 70%),
+    linear-gradient(180deg,rgba(255,255,255,.12),transparent 42%);
+}
+html .call-main.is-pressed{filter:brightness(1.08)}
+
+/* hover keeps the glass rim; no sticky hover lift on touch screens */
+html .call-main:hover{
+  box-shadow:
+    inset 1.5px 1.5px 1px -.5px rgba(255,255,255,.95),
+    inset -1.5px -1.5px 1px -.5px rgba(255,255,255,.50),
+    inset 0 0 18px rgba(255,255,255,.18),
+    0 18px 44px rgba(0,0,0,.32),
+    0 0 48px rgba(160,189,219,.22);
+}
+@media (hover:none){
+  .call-main:hover,.contact-card:hover{transform:none}
+}
+
+/* ---- phones ---- */
+@media (max-width:700px){
+  :root{--lg-blur:16px;--lg-blur-nav:16px}
+  html .nav{border-radius:33px}
+  html .contact-card{padding:16px}
+  /* reserve two lines so the page doesn't jump while the quote types */
+  .typing-area{min-height:2.95em}
+  /* cheaper reveal on phones */
+  .scroll-reveal{filter:none!important;transform:translateY(28px);transition:opacity .6s var(--lg-ease),transform .6s var(--lg-ease)}
+  .scroll-reveal.is-visible{transform:none}
+  html .contact-card.scroll-reveal{
+    transition:opacity .6s var(--lg-ease),transform .6s var(--lg-ease),scale .5s var(--lg-spring),box-shadow .3s ease;
+  }
+  html .contact-card.scroll-reveal:nth-child(1){transition-delay:.05s,.05s,0s,0s}
+  html .contact-card.scroll-reveal:nth-child(2){transition-delay:.12s,.12s,0s,0s}
+  html .contact-card.scroll-reveal:nth-child(3){transition-delay:.19s,.19s,0s,0s}
+}
+@media (max-width:360px){
+  html .contact-card{padding:14px 12px;min-height:84px}
+  .icon-wrap{flex-basis:56px!important;width:56px!important;height:56px!important}
+  .icon-wrap img{width:34px!important;height:34px!important}
+}
+
+/* ---- accessibility / fallbacks ---- */
+@media (prefers-reduced-transparency:reduce){
+  html .glass::before{-webkit-backdrop-filter:none;backdrop-filter:none;background:rgba(18,22,38,.93)}
+  html .call-main,html .icon-wrap{-webkit-backdrop-filter:none;backdrop-filter:none}
+}
+@supports not ((backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px))){
+  html .glass::before{background:rgba(22,28,46,.88)}
+}
+@media (prefers-reduced-motion:reduce){
+  html .contact-card.scroll-reveal,html .call-main{transition:none}
+  html .contact-card.is-pressed,html .call-main.is-pressed{scale:1}
+}
+</style>
+
+<script id="liquid-glass-js">
+(function(){
+  "use strict";
+  // iOS Safari only enables touch states when a touch listener exists
+  document.addEventListener("touchstart",function(){},{passive:true});
+
+  // Light that follows your finger / cursor + press squish
+  var els=[].slice.call(document.querySelectorAll(".glass,.call-main"));
+  els.forEach(function(el){
+    var raf=0,x=0,y=0,t=0;
+    function paint(){raf=0;el.style.setProperty("--mx",x+"px");el.style.setProperty("--my",y+"px");}
+    function move(e){
+      var r=el.getBoundingClientRect();x=e.clientX-r.left;y=e.clientY-r.top;
+      if(!raf)raf=requestAnimationFrame(paint);
+    }
+    // put the sheen back to its resting spot (otherwise it stays stuck where the cursor left)
+    function reset(){
+      if(raf){cancelAnimationFrame(raf);raf=0;}
+      el.style.removeProperty("--mx");el.style.removeProperty("--my");
+    }
+    function release(){clearTimeout(t);t=setTimeout(function(){el.classList.remove("is-pressed");},140);}
+    el.addEventListener("pointermove",move,{passive:true});
+    el.addEventListener("pointerdown",function(e){clearTimeout(t);el.classList.add("is-pressed");move(e);},{passive:true});
+    el.addEventListener("pointerup",function(e){release();if(e.pointerType!=="mouse")reset();},{passive:true});
+    el.addEventListener("pointercancel",function(){release();reset();},{passive:true});
+    el.addEventListener("pointerleave",function(){release();reset();},{passive:true});
+  });
+
+  // Top bar gets a touch more body once content slides under it
+  var nav=document.querySelector(".nav"),tick=false;
+  var lastY=window.scrollY||0;
+  function onScroll(){
+    tick=false;if(!nav)return;
+    var y=Math.max(0,window.scrollY),d=y-lastY;
+    nav.classList.toggle("is-scrolled",y>10);
+    if(y<=10){nav.classList.remove("nav-hidden");}          // at the top: always visible
+    else if(d>4){nav.classList.add("nav-hidden");}           // scrolling down: fade out
+    else if(d<-4){nav.classList.remove("nav-hidden");}       // scrolling up: fade back in
+    lastY=y;
+  }
+  window.addEventListener("scroll",function(){if(!tick){tick=true;requestAnimationFrame(onScroll);}},{passive:true});
+  onScroll();
+})();
+</script>
+
+
+<style id="bg-video-style">
+.bg-video{position:fixed;inset:0;z-index:0;overflow:hidden;pointer-events:none;background:#080813}
+.bg-video video{
+  position:absolute;inset:0;width:100%;height:100%;object-fit:cover;
+  opacity:0;transition:opacity 1.4s ease;pointer-events:none;
+  -webkit-transform:translateZ(0);transform:translateZ(0);
+}
+.bg-video video.is-ready{opacity:1}
+/* gentle shade: keeps text readable while the colors still show through the glass */
+.bg-video::after{
+  content:"";position:absolute;inset:0;
+  background:
+    radial-gradient(120% 80% at 50% 0%,rgba(8,8,19,0),rgba(8,8,19,.30) 100%),
+    linear-gradient(180deg,rgba(8,8,19,.22),rgba(8,8,19,.38));
+}
+/* the soft color blobs are no longer needed: the video provides the color */
+.bg-glow{display:none}
+@media (max-width:700px){ :root{--lg-blur:14px;--lg-blur-nav:14px} }
+</style>
+<script id="bg-video-js">
+(function(){
+  "use strict";
+  var v=document.getElementById("bgVideo"); if(!v) return;
+  v.muted=true; v.defaultMuted=true; v.setAttribute("playsinline","");
+  function ready(){ v.classList.add("is-ready"); }
+  v.addEventListener("loadeddata",ready);
+  if(v.readyState>=2) ready();
+
+  function safePlay(){ try{ var p=v.play(); if(p&&p.catch) p.catch(function(){}); }catch(_){} }
+
+  var reduce=window.matchMedia&&matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var save=navigator.connection&&navigator.connection.saveData;
+  if(reduce||save){ v.removeAttribute("autoplay"); v.pause(); return; }   // still frame only
+
+  safePlay();
+  // save battery when the tab/app is in the background
+  document.addEventListener("visibilitychange",function(){ if(document.hidden) v.pause(); else safePlay(); });
+  // iOS Low Power Mode blocks autoplay: start on first touch instead
+  function once(){ if(v.paused) safePlay(); document.removeEventListener("touchstart",once); document.removeEventListener("pointerdown",once); }
+  document.addEventListener("touchstart",once,{passive:true});
+  document.addEventListener("pointerdown",once,{passive:true});
+})();
+</script>
+
+<script id="mobile-haptics">
+(function(){
+  // Light vibration on tap (Android; iOS Safari ignores it silently)
+  var tap=function(){ try{ if(navigator.vibrate) navigator.vibrate(12); }catch(_){} };
+  document.querySelectorAll('.contact-card,.call-main').forEach(function(el){
+    el.addEventListener('click',tap,{passive:true});
+  });
+})();
+</script>
 </body>
 </html>
