@@ -151,7 +151,10 @@ footer.scroll-reveal{transition-delay:.12s}
 <style id="iceberg-static">
 /* Cinematic iceberg background — static */
 .iceberg-motion{
-  position:fixed;inset:-7%;z-index:0;pointer-events:none;
+  position:fixed;top:0;left:0;width:100vw;height:100vh;height:100svh;z-index:0;pointer-events:none;
+  transform:translate3d(0,0,0);
+  -webkit-transform:translate3d(0,0,0);
+  will-change:auto;
   background:
     linear-gradient(180deg,rgba(8,8,19,.34) 0%,rgba(8,8,19,.56) 38%,rgba(8,8,19,.93) 100%),
     linear-gradient(90deg,rgba(8,8,19,.48) 0%,rgba(8,8,19,.20) 48%,rgba(8,8,19,.52) 100%),
@@ -161,7 +164,7 @@ footer.scroll-reveal{transition-delay:.12s}
 body{background:#080813!important}
 main,.nav{position:relative;z-index:2}
 body:before{z-index:1!important}
-@media(max-width:700px){.iceberg-motion{inset:-8% 0 0;min-height:125vh;background-attachment:scroll;}}
+@media(max-width:700px){.iceberg-motion{top:0;left:0;width:100vw;height:100svh;min-height:0;transform:translate3d(0,0,0);-webkit-transform:translate3d(0,0,0);}}
 </style>
 
 </head>
