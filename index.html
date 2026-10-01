@@ -12,6 +12,7 @@
 <link rel="apple-touch-icon" href="logo.png">
 <meta name="description" content="ارتباط با مهندس عرفان عباسی نژاد و پشتیبانی">
 <title>مهندس عرفان عباسی‌نژاد | ارتباط مستقیم</title>
+<link rel="preload" as="image" href="bg-poster.jpg">
 <link rel="stylesheet" href="style.css">
 <meta http-equiv="Content-Security-Policy" content="default-src 'self' data: https:; img-src 'self' data: blob: https:; style-src 'self' 'unsafe-inline' https:; font-src 'self' data: https:; script-src 'self' 'unsafe-inline'; object-src 'none'; base-uri 'self'; form-action 'none'">
 <meta name="referrer" content="strict-origin-when-cross-origin">
@@ -325,8 +326,7 @@ document.addEventListener("DOMContentLoaded",function(){
    entries.forEach(entry=>{
      if(entry.isIntersecting){
        entry.target.classList.add("is-visible");
-     } else {
-       entry.target.classList.remove("is-visible");
+       observer.unobserve(entry.target);
      }
    });
  },{threshold:.16,rootMargin:"0px 0px -70px 0px"});
@@ -605,26 +605,38 @@ html .call-main:hover{
   // iOS Safari only enables touch states when a touch listener exists
   document.addEventListener("touchstart",function(){},{passive:true});
 
-  // Light that follows your finger / cursor + press squish
+  // Water ripples: waves spread from the cursor / finger instead of a light patch
   var els=[].slice.call(document.querySelectorAll(".glass,.call-main"));
+  var calm=window.matchMedia&&matchMedia("(prefers-reduced-motion: reduce)").matches;
   els.forEach(function(el){
-    var raf=0,x=0,y=0,t=0;
-    function paint(){raf=0;el.style.setProperty("--mx",x+"px");el.style.setProperty("--my",y+"px");}
-    function move(e){
-      var r=el.getBoundingClientRect();x=e.clientX-r.left;y=e.clientY-r.top;
-      if(!raf)raf=requestAnimationFrame(paint);
+    var layer=document.createElement("span");
+    layer.className="lg-ripples";layer.setAttribute("aria-hidden","true");
+    el.appendChild(layer);
+    var t=0,lx=-999,ly=-999,lt=0;
+
+    function pos(e){var r=el.getBoundingClientRect();return {x:e.clientX-r.left,y:e.clientY-r.top,w:r.width,h:r.height};}
+    function ripple(p,big){
+      if(calm)return;
+      var d=big?Math.min(700,Math.max(p.w,p.h)*1.4):170;
+      var s=document.createElement("span");
+      s.className="lg-ripple"+(big?" is-big":"");
+      s.style.left=p.x+"px";s.style.top=p.y+"px";
+      s.style.width=d+"px";s.style.height=d+"px";
+      s.style.marginLeft=(-d/2)+"px";s.style.marginTop=(-d/2)+"px";
+      s.addEventListener("animationend",function(){if(s.parentNode)s.parentNode.removeChild(s);});
+      while(layer.children.length>=7)layer.removeChild(layer.firstChild);
+      layer.appendChild(s);
     }
-    // put the sheen back to its resting spot (otherwise it stays stuck where the cursor left)
-    function reset(){
-      if(raf){cancelAnimationFrame(raf);raf=0;}
-      el.style.removeProperty("--mx");el.style.removeProperty("--my");
+    function move(e){
+      var p=pos(e),now=performance.now();
+      if(Math.hypot(p.x-lx,p.y-ly)>34&&now-lt>110){lx=p.x;ly=p.y;lt=now;ripple(p,false);}
     }
     function release(){clearTimeout(t);t=setTimeout(function(){el.classList.remove("is-pressed");},140);}
+
+    el.addEventListener("pointerenter",function(e){if(e.pointerType==="mouse"){var p=pos(e);lx=p.x;ly=p.y;lt=performance.now();ripple(p,false);}},{passive:true});
     el.addEventListener("pointermove",move,{passive:true});
-    el.addEventListener("pointerdown",function(e){clearTimeout(t);el.classList.add("is-pressed");move(e);},{passive:true});
-    el.addEventListener("pointerup",function(e){release();if(e.pointerType!=="mouse")reset();},{passive:true});
-    el.addEventListener("pointercancel",function(){release();reset();},{passive:true});
-    el.addEventListener("pointerleave",function(){release();reset();},{passive:true});
+    el.addEventListener("pointerdown",function(e){clearTimeout(t);el.classList.add("is-pressed");var p=pos(e);lx=p.x;ly=p.y;lt=performance.now();ripple(p,true);},{passive:true});
+    ["pointerup","pointercancel","pointerleave"].forEach(function(n){el.addEventListener(n,release,{passive:true});});
   });
 
   // Top bar gets a touch more body once content slides under it
@@ -646,7 +658,7 @@ html .call-main:hover{
 
 
 <style id="bg-video-style">
-.bg-video{position:fixed;inset:0;z-index:0;overflow:hidden;pointer-events:none;background:#080813}
+.bg-video{position:fixed;inset:0;z-index:0;overflow:hidden;pointer-events:none;background:#080813 url("bg-poster.jpg") center center/cover no-repeat}
 .bg-video video{
   position:absolute;inset:0;width:100%;height:100%;object-fit:cover;
   opacity:0;transition:opacity 1.4s ease;pointer-events:none;
@@ -698,5 +710,136 @@ html .call-main:hover{
   });
 })();
 </script>
+
+<style id="glass-always-clear">
+/* Any opacity<1 or filter on a glass element (or its parent) makes the browser stop
+   blurring what is behind it, so the glass turns flat and bluish. Keep them always clear. */
+html body .contact-card.scroll-reveal,
+html body .quote-section.scroll-reveal{opacity:1!important;filter:none!important}
+
+html body .contact-card.scroll-reveal{
+  transition:transform .8s var(--lg-ease),scale .5s var(--lg-spring),box-shadow .3s ease;
+}
+html body .contact-card.scroll-reveal:nth-child(1){transition-delay:.1s,0s,0s}
+html body .contact-card.scroll-reveal:nth-child(2){transition-delay:.2s,0s,0s}
+html body .contact-card.scroll-reveal:nth-child(3){transition-delay:.3s,0s,0s}
+html body .quote-section.scroll-reveal{transition:transform .8s var(--lg-ease)}
+
+/* clipping with overflow + radius is a known cause of lost backdrop blur in Safari while scrolling;
+   the glass layers already carry their own rounded corners */
+html body .contact-card,html body .quote-card{overflow:visible}
+
+@media (max-width:700px){
+  html body .contact-card.scroll-reveal{
+    transition:transform .6s var(--lg-ease),scale .5s var(--lg-spring),box-shadow .3s ease;
+  }
+  html body .contact-card.scroll-reveal:nth-child(1){transition-delay:.05s,0s,0s}
+  html body .contact-card.scroll-reveal:nth-child(2){transition-delay:.12s,0s,0s}
+  html body .contact-card.scroll-reveal:nth-child(3){transition-delay:.19s,0s,0s}
+}
+@media (prefers-reduced-motion:reduce){
+  html body .contact-card.scroll-reveal,html body .quote-section.scroll-reveal{transition:none}
+}
+</style>
+
+<style id="nav-soft-frost">
+/* Gradients can't be transitioned directly, which made the bar snap to a frosted look.
+   Animating a registered number that drives the tint alpha makes it fade in slowly instead. */
+@property --nav-tint{syntax:"<number>";inherits:false;initial-value:0}
+html body .nav::before{
+  --nav-tint:0;
+  background:
+    radial-gradient(120% 90% at 0% 0%,rgba(255,255,255,calc(.22 + .04*var(--nav-tint))),transparent 55%),
+    linear-gradient(135deg,rgba(255,255,255,calc(.13 + .04*var(--nav-tint))),rgba(160,189,219,calc(.045 + .025*var(--nav-tint))) 50%,rgba(255,255,255,calc(.08 + .04*var(--nav-tint))));
+  transition:--nav-tint 1.6s cubic-bezier(.4,0,.2,1);
+}
+html body .nav.is-scrolled::before{
+  --nav-tint:1;
+  background:
+    radial-gradient(120% 90% at 0% 0%,rgba(255,255,255,calc(.22 + .04*var(--nav-tint))),transparent 55%),
+    linear-gradient(135deg,rgba(255,255,255,calc(.13 + .04*var(--nav-tint))),rgba(160,189,219,calc(.045 + .025*var(--nav-tint))) 50%,rgba(255,255,255,calc(.08 + .04*var(--nav-tint))));
+}
+</style>
+
+<style id="nav-fade-keep-glass">
+/* Fading the whole bar with opacity makes the browser flatten its blur for a moment (the matte flash).
+   So the bar itself never changes opacity; its glass layer and content fade instead. */
+html body .nav,
+html body .nav.nav-hidden{opacity:1;transition:transform .5s var(--lg-ease),visibility 0s 0s}
+html body .nav.nav-hidden{transform:translateY(-14px);visibility:hidden;pointer-events:none;transition:transform .5s var(--lg-ease),visibility 0s .6s}
+
+html body .nav::before{transition:--nav-tint 1.6s cubic-bezier(.4,0,.2,1),opacity .6s var(--lg-ease)}
+html body .nav::after,
+html body .nav > *{transition:opacity .6s var(--lg-ease)}
+
+html body .nav.nav-hidden::before,
+html body .nav.nav-hidden::after,
+html body .nav.nav-hidden > *{opacity:0}
+
+@media (prefers-reduced-motion:reduce){
+  html body .nav,html body .nav.nav-hidden{transform:none;transition:visibility 0s .2s}
+  html body .nav::before,html body .nav::after,html body .nav > *{transition:opacity .2s linear}
+}
+</style>
+
+<style id="nav-fade-speeds">
+/* Appearing (transition used when the hidden state is removed): slow and gentle */
+html body .nav{transition:transform 1s var(--lg-ease),visibility 0s 0s}
+html body .nav::before{transition:--nav-tint 1.6s cubic-bezier(.4,0,.2,1),opacity 1s ease}
+html body .nav::after,
+html body .nav > *{transition:opacity 1s ease}
+
+/* Disappearing (transition used when the hidden state is added): quick */
+html body .nav.nav-hidden{transition:transform .25s ease-in,visibility 0s .25s}
+html body .nav.nav-hidden::before{transition:--nav-tint 1.6s cubic-bezier(.4,0,.2,1),opacity .25s ease-in}
+html body .nav.nav-hidden::after,
+html body .nav.nav-hidden > *{transition:opacity .25s ease-in}
+
+@media (prefers-reduced-motion:reduce){
+  html body .nav,html body .nav.nav-hidden{transform:none;transition:visibility 0s .2s}
+  html body .nav::before,html body .nav::after,html body .nav > *,
+  html body .nav.nav-hidden::before,html body .nav.nav-hidden::after,html body .nav.nav-hidden > *{transition:opacity .2s linear}
+}
+</style>
+
+<style id="water-ripple">
+/* No light patch anywhere: the glass keeps its tint and thin edge highlight only */
+html body .glass::after{background:none}
+html body .contact-card.is-pressed::after{background:none}
+html body .contact-card::before,
+html body .quote-card::before{
+  background:linear-gradient(135deg,rgba(255,255,255,.12),rgba(160,189,219,.045) 50%,rgba(255,255,255,.08));
+}
+html body .call-main{
+  background:linear-gradient(135deg,rgba(228,242,255,.55),rgba(160,189,219,.40));
+}
+
+/* Water-wave layer, clipped to each element's rounded shape */
+html body .lg-ripples{
+  position:absolute;inset:0;border-radius:inherit;overflow:hidden;
+  pointer-events:none;z-index:2;
+  -webkit-transform:translateZ(0);transform:translateZ(0);
+  -webkit-mask-image:-webkit-radial-gradient(white,black);
+}
+html body .glass > .lg-ripples{position:absolute}
+.lg-ripple{
+  position:absolute;border-radius:50%;pointer-events:none;
+  background:radial-gradient(circle closest-side,
+    rgba(255,255,255,0) 0%, rgba(255,255,255,0) 40%,
+    rgba(255,255,255,.30) 50%, rgba(255,255,255,.05) 56%,
+    rgba(0,0,0,.07) 60%, rgba(255,255,255,0) 66%, rgba(255,255,255,0) 68%,
+    rgba(255,255,255,.20) 78%, rgba(255,255,255,.04) 84%,
+    rgba(255,255,255,0) 90%, rgba(255,255,255,0) 100%);
+  transform:scale(.08);opacity:1;will-change:transform,opacity;
+  animation:lgWave 1.5s cubic-bezier(.18,.6,.3,1) forwards;
+}
+.lg-ripple.is-big{animation-duration:1.9s}
+@keyframes lgWave{
+  0%{transform:scale(.08);opacity:.95}
+  70%{opacity:.5}
+  100%{transform:scale(1);opacity:0}
+}
+@media (prefers-reduced-motion:reduce){.lg-ripples{display:none}}
+</style>
 </body>
 </html>
