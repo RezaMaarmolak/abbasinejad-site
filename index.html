@@ -198,10 +198,10 @@ footer.scroll-reveal{transition-delay:.12s}
 
     <h1>مهندس عرفان<br><strong>عباسی‌نژاد</strong></h1>
 
-    <a class="call-main" href="tel:+989147142506">
+    <a class="call-main glass" href="tel:+989147142506">
       <img draggable="false" oncontextmenu="return false" src="phone.png" alt="">
       <span>تماس مستقیم با مهندس عباسی‌نژاد</span>
-      <b>←</b>
+      
     </a>
   </section>
 
@@ -236,7 +236,6 @@ footer.scroll-reveal{transition-delay:.12s}
           <strong>شماره پشتیبانی</strong>
           <span dir="ltr">+98 935 876 2506</span>
         </div>
-        <i>↗</i>
       </a>
 
       <a class="contact-card glass scroll-reveal" href="https://t.me/abbasinejad_adviser" target="_blank" rel="noopener noreferrer">
@@ -246,7 +245,6 @@ footer.scroll-reveal{transition-delay:.12s}
           <strong>تلگرام</strong>
           <span dir="ltr">@abbasinejad_adviser</span>
         </div>
-        <i>↗</i>
       </a>
 
       <a class="contact-card glass scroll-reveal" href="https://www.instagram.com/abbasinejad_adviser" target="_blank" rel="noopener noreferrer">
@@ -256,7 +254,6 @@ footer.scroll-reveal{transition-delay:.12s}
           <strong>اینستاگرام</strong>
           <span dir="ltr">@abbasinejad_adviser</span>
         </div>
-        <i>↗</i>
       </a>
     </div>
   </section>
@@ -611,9 +608,13 @@ html .call-main:hover{
   els.forEach(function(el){
     var layer=document.createElement("span");
     layer.className="lg-ripples";layer.setAttribute("aria-hidden","true");
+    var edge=document.createElement("span");
+    edge.className="lg-edge";edge.setAttribute("aria-hidden","true");
+    el.appendChild(edge);
     el.appendChild(layer);
     var t=0,lx=-999,ly=-999,lt=0;
 
+    function splash(e,big){ if(window.__lgWater) window.__lgWater.drop(e.clientX,e.clientY,big); }
     function pos(e){var r=el.getBoundingClientRect();return {x:e.clientX-r.left,y:e.clientY-r.top,w:r.width,h:r.height};}
     function ripple(p,big){
       if(calm)return;
@@ -629,13 +630,13 @@ html .call-main:hover{
     }
     function move(e){
       var p=pos(e),now=performance.now();
-      if(Math.hypot(p.x-lx,p.y-ly)>34&&now-lt>110){lx=p.x;ly=p.y;lt=now;ripple(p,false);}
+      if(Math.hypot(p.x-lx,p.y-ly)>34&&now-lt>110){lx=p.x;ly=p.y;lt=now;ripple(p,false);splash(e,false);}
     }
     function release(){clearTimeout(t);t=setTimeout(function(){el.classList.remove("is-pressed");},140);}
 
-    el.addEventListener("pointerenter",function(e){if(e.pointerType==="mouse"){var p=pos(e);lx=p.x;ly=p.y;lt=performance.now();ripple(p,false);}},{passive:true});
+    el.addEventListener("pointerenter",function(e){if(e.pointerType==="mouse"){var p=pos(e);lx=p.x;ly=p.y;lt=performance.now();ripple(p,false);splash(e,false);}},{passive:true});
     el.addEventListener("pointermove",move,{passive:true});
-    el.addEventListener("pointerdown",function(e){clearTimeout(t);el.classList.add("is-pressed");var p=pos(e);lx=p.x;ly=p.y;lt=performance.now();ripple(p,true);},{passive:true});
+    el.addEventListener("pointerdown",function(e){clearTimeout(t);el.classList.add("is-pressed");var p=pos(e);lx=p.x;ly=p.y;lt=performance.now();ripple(p,true);splash(e,true);},{passive:true});
     ["pointerup","pointercancel","pointerleave"].forEach(function(n){el.addEventListener(n,release,{passive:true});});
   });
 
@@ -841,5 +842,323 @@ html body .glass > .lg-ripples{position:absolute}
 }
 @media (prefers-reduced-motion:reduce){.lg-ripples{display:none}}
 </style>
+
+<style id="water-3d">
+#waterGL{position:absolute;inset:0;width:100%;height:100%;display:block;opacity:0;transition:opacity .45s ease;pointer-events:none}
+#waterGL.on{opacity:1}
+
+/* in-element rings: lit from the top-left (bright crest on one side, shadow on the other) and tilted in perspective */
+.lg-ripple{
+  background:
+    radial-gradient(circle closest-side at 46.5% 46.5%,
+      rgba(255,255,255,0) 0%,rgba(255,255,255,0) 44%,rgba(255,255,255,.70) 50%,rgba(255,255,255,0) 57%,
+      rgba(255,255,255,0) 64%,rgba(255,255,255,.42) 72%,rgba(255,255,255,0) 79%,rgba(255,255,255,0) 100%),
+    radial-gradient(circle closest-side at 53.5% 53.5%,
+      rgba(0,0,0,0) 0%,rgba(0,0,0,0) 44%,rgba(0,0,0,.30) 50%,rgba(0,0,0,0) 57%,
+      rgba(0,0,0,0) 64%,rgba(0,0,0,.20) 72%,rgba(0,0,0,0) 79%,rgba(0,0,0,0) 100%);
+  animation:lgWave3d 1.6s cubic-bezier(.18,.6,.3,1) forwards;
+}
+.lg-ripple.is-big{animation-duration:2s}
+@keyframes lgWave3d{
+  0%{transform:perspective(520px) rotateX(26deg) scale(.08);opacity:.95}
+  65%{opacity:.55}
+  100%{transform:perspective(520px) rotateX(26deg) scale(1);opacity:0}
+}
+</style>
+
+<script id="water-gl">
+(function(){
+  "use strict";
+  if(window.matchMedia&&matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  var wrap=document.querySelector(".bg-video"), vid=document.getElementById("bgVideo");
+  if(!wrap) return;
+
+  var cv=document.createElement("canvas"); cv.id="waterGL"; cv.setAttribute("aria-hidden","true");
+  var gl=null;
+  try{ gl=cv.getContext("webgl",{alpha:false,antialias:false,depth:false,stencil:false,powerPreference:"low-power"})||cv.getContext("experimental-webgl"); }catch(_){}
+  if(!gl) return;
+
+  var VS="attribute vec2 aPos;varying vec2 vUv;void main(){vUv=aPos*.5+.5;gl_Position=vec4(aPos,0.,1.);}";
+  var FS=[
+    "#ifdef GL_FRAGMENT_PRECISION_HIGH","precision highp float;","#else","precision mediump float;","#endif",
+    "uniform sampler2D uTex;uniform vec2 uCss;uniform float uTexAspect;uniform vec4 uDrops[8];varying vec2 vUv;",
+    "vec2 cover(vec2 uv){float ca=uCss.x/uCss.y;vec2 s=ca>uTexAspect?vec2(1.0,uTexAspect/ca):vec2(ca/uTexAspect,1.0);return (uv-0.5)*s+0.5;}",
+    "void main(){",
+    "  vec2 uvT=vec2(vUv.x,1.0-vUv.y);",
+    "  vec2 p=uvT*uCss; vec2 grad=vec2(0.0);",
+    "  for(int i=0;i<8;i++){",
+    "    vec4 dr=uDrops[i];",
+    "    if(dr.w>0.0){",
+    "      vec2 d=p-dr.xy; float r=length(d)+0.001;",
+    "      float x=r-dr.z*300.0; float w=54.0; float k=0.10;",
+    "      float env=exp(-(x*x)/(2.0*w*w));",
+    "      float att=dr.w*exp(-dr.z*1.05)/(1.0+r*0.009);",
+    "      float s=sin(k*x); float c=cos(k*x);",
+    "      float dh=att*env*(k*c-s*x/(w*w));",
+    "      grad+=dh*d/r;",
+    "    }",
+    "  }",
+    "  vec2 t=cover(uvT+grad*105.0/uCss); t.y=1.0-t.y;",
+    "  vec3 col=texture2D(uTex,t).rgb;",
+    "  vec3 n=normalize(vec3(-grad*8.0,1.0));",
+    "  vec3 L=normalize(vec3(-0.45,-0.55,0.70));",
+    "  float diff=dot(n,L)-L.z;",
+    "  vec3 H=normalize(L+vec3(0.0,0.0,1.0));",
+    "  float spec=pow(max(dot(n,H),0.0),70.0);",
+    "  col+=diff*0.60+spec*vec3(0.80,0.90,1.0)*0.60;",
+    "  gl_FragColor=vec4(col,1.0);",
+    "}"
+  ].join("\n");
+
+  function sh(type,src){var o=gl.createShader(type);gl.shaderSource(o,src);gl.compileShader(o);
+    if(!gl.getShaderParameter(o,gl.COMPILE_STATUS)){throw new Error(gl.getShaderInfoLog(o));}return o;}
+  var prog,uTex,uCss,uAsp,uDr,tex,posterImg,lastSrc=null,drops=[],raf=0,dead=false,SCALE=1;
+
+  function die(){
+    dead=true; if(raf)cancelAnimationFrame(raf);
+    if(cv.parentNode)cv.parentNode.removeChild(cv);
+    window.__lgWater=null; document.documentElement.classList.remove("water-gl");
+  }
+
+  try{
+    prog=gl.createProgram();
+    gl.attachShader(prog,sh(gl.VERTEX_SHADER,VS)); gl.attachShader(prog,sh(gl.FRAGMENT_SHADER,FS));
+    gl.linkProgram(prog);
+    if(!gl.getProgramParameter(prog,gl.LINK_STATUS))throw new Error(gl.getProgramInfoLog(prog));
+    gl.useProgram(prog);
+    var buf=gl.createBuffer(); gl.bindBuffer(gl.ARRAY_BUFFER,buf);
+    gl.bufferData(gl.ARRAY_BUFFER,new Float32Array([-1,-1,1,-1,-1,1,1,1]),gl.STATIC_DRAW);
+    var aPos=gl.getAttribLocation(prog,"aPos"); gl.enableVertexAttribArray(aPos); gl.vertexAttribPointer(aPos,2,gl.FLOAT,false,0,0);
+    uTex=gl.getUniformLocation(prog,"uTex"); uCss=gl.getUniformLocation(prog,"uCss");
+    uAsp=gl.getUniformLocation(prog,"uTexAspect"); uDr=gl.getUniformLocation(prog,"uDrops[0]");
+    tex=gl.createTexture(); gl.bindTexture(gl.TEXTURE_2D,tex);
+    gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL,true);
+    gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_S,gl.CLAMP_TO_EDGE);
+    gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_T,gl.CLAMP_TO_EDGE);
+    gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MIN_FILTER,gl.LINEAR);
+    gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MAG_FILTER,gl.LINEAR);
+    gl.uniform1i(uTex,0);
+  }catch(err){ return; }   // shader problem: keep the in-element ripples only
+
+  posterImg=new Image(); posterImg.src="bg-poster.jpg";
+  wrap.insertBefore(cv, vid? vid.nextSibling : null);
+  cv.addEventListener("webglcontextlost",function(e){e.preventDefault();die();});
+
+  function source(){
+    if(vid&&vid.readyState>=2&&vid.videoWidth) return {el:vid,w:vid.videoWidth,h:vid.videoHeight,live:true};
+    if(posterImg.complete&&posterImg.naturalWidth) return {el:posterImg,w:posterImg.naturalWidth,h:posterImg.naturalHeight,live:false};
+    return null;
+  }
+  function size(){
+    var r=wrap.getBoundingClientRect(), dpr=window.devicePixelRatio||1;
+    SCALE=Math.min(1,Math.max(.6,dpr*.6));
+    var w=Math.max(2,Math.round(r.width*SCALE)), h=Math.max(2,Math.round(r.height*SCALE));
+    if(cv.width!==w||cv.height!==h){cv.width=w;cv.height=h;gl.viewport(0,0,w,h);}
+    gl.uniform2f(uCss,r.width,r.height);
+  }
+
+  var LIFE=2800, buf32=new Float32Array(32);
+  function frame(now){
+    raf=0; if(dead)return;
+    drops=drops.filter(function(d){return now-d.t0<LIFE;});
+    if(!drops.length){ cv.classList.remove("on"); return; }
+    var src=source(); if(!src){ raf=requestAnimationFrame(frame); return; }
+    try{
+      size();
+      gl.bindTexture(gl.TEXTURE_2D,tex);
+      if(src.live||lastSrc!==src.el){ gl.texImage2D(gl.TEXTURE_2D,0,gl.RGBA,gl.RGBA,gl.UNSIGNED_BYTE,src.el); lastSrc=src.el; }
+      gl.uniform1f(uAsp,src.w/src.h);
+      buf32.fill(0);
+      for(var i=0;i<drops.length&&i<8;i++){
+        var d=drops[i]; buf32[i*4]=d.x; buf32[i*4+1]=d.y; buf32[i*4+2]=(now-d.t0)/1000; buf32[i*4+3]=d.a;
+      }
+      gl.uniform4fv(uDr,buf32);
+      gl.drawArrays(gl.TRIANGLE_STRIP,0,4);
+      cv.classList.add("on");
+    }catch(err){ die(); return; }   // e.g. browser blocks reading the video/image into WebGL
+    raf=requestAnimationFrame(frame);
+  }
+
+  window.__lgWater={
+    drop:function(x,y,big){
+      if(dead)return;
+      var wr=wrap.getBoundingClientRect();
+      drops.push({x:x-wr.left,y:y-wr.top,t0:performance.now(),a:big?1:.62});
+      if(drops.length>8)drops.shift();
+      if(!raf)raf=requestAnimationFrame(frame);
+    }
+  };
+  document.documentElement.classList.add("water-gl");
+})();
+</script>
+
+<style id="liquid-glass-v2">
+/* ============ 1) background never cuts off when the phone toolbar moves ============
+   The fixed layers are taller than the screen, so when the address bar collapses/expands
+   while you flick-scroll there is never an uncovered strip at the bottom. */
+html body .bg-video{inset:-140px 0 -260px 0}
+html body::before{inset:-140px 0 -260px 0}
+html body .grain{inset:-140px 0 -260px 0}
+
+/* ============ 2) Apple-style liquid glass ============ */
+:root{--lg-edge:5px}
+
+html body .glass{
+  box-shadow:0 20px 44px -14px rgba(0,0,0,.50),0 4px 14px rgba(0,0,0,.18);
+}
+/* body of the glass: almost clear, just a whisper of frost */
+html body .glass::before{
+  background:linear-gradient(135deg,rgba(255,255,255,.10),rgba(255,255,255,.02) 45%,rgba(255,255,255,.07));
+  -webkit-backdrop-filter:var(--lg-bf,blur(10px) saturate(175%) brightness(1.06));
+  backdrop-filter:var(--lg-bf,blur(10px) saturate(175%) brightness(1.06));
+  box-shadow:inset 0 0 28px rgba(255,255,255,.07),inset 0 -16px 24px -16px rgba(255,255,255,.16);
+}
+/* thin specular rim: bright top-left arc, softer bottom-right arc */
+html body .glass::after{
+  background:none;
+  box-shadow:
+    inset 0 0 0 1px rgba(255,255,255,.24),
+    inset 2px 3px 3px -2px rgba(255,255,255,.95),
+    inset -2px -3px 3px -2px rgba(255,255,255,.60),
+    inset 0 0 0 6px rgba(255,255,255,.03);
+}
+/* thick refractive bezel: a ring that looks brighter, richer and slightly magnified */
+html body .glass > .lg-edge{
+  position:absolute;inset:0;border-radius:inherit;z-index:2;pointer-events:none;
+  padding:var(--lg-edge);
+  background:linear-gradient(135deg,rgba(255,255,255,.34),rgba(255,255,255,.04) 32%,rgba(255,255,255,.02) 62%,rgba(255,255,255,.26));
+  -webkit-backdrop-filter:blur(1px) saturate(125%) brightness(1.14);
+  backdrop-filter:blur(1px) saturate(125%) brightness(1.14);
+  -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);
+  -webkit-mask-composite:xor;
+  mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);
+  mask-composite:exclude;
+}
+
+/* ---- shapes: pills and lenses, like the reference ---- */
+html body .nav{border-radius:999px}
+html body .contact-card{border-radius:999px;min-height:96px;padding:14px 16px;gap:16px}
+html body .call-main.glass{border-radius:999px;min-height:62px}
+html body .quote-card{border-radius:34px}
+html body .hero-doctor{border-radius:50%}
+
+/* ---- round lens bubble for the icons ---- */
+html body .icon-wrap{
+  flex:0 0 64px;width:64px;height:64px;border-radius:50%;
+  background:
+    radial-gradient(120% 120% at 30% 16%,rgba(255,255,255,.34),rgba(255,255,255,0) 52%),
+    linear-gradient(160deg,rgba(255,255,255,.16),rgba(255,255,255,.04));
+  box-shadow:
+    inset 0 0 0 1px rgba(255,255,255,.50),
+    inset 3px 4px 6px -3px rgba(255,255,255,.95),
+    inset -3px -4px 8px -3px rgba(255,255,255,.55),
+    inset 0 0 18px rgba(255,255,255,.18),
+    0 8px 20px rgba(0,0,0,.30);
+  -webkit-backdrop-filter:blur(4px) saturate(210%) brightness(1.14);
+  backdrop-filter:blur(4px) saturate(210%) brightness(1.14);
+}
+html body .icon-wrap::before{opacity:.5}
+html body .icon-wrap img{width:36px;height:36px;opacity:.95}
+
+/* ---- the main call button: tinted, brighter glass ---- */
+html body .call-main.glass{
+  background:none;border:0;-webkit-backdrop-filter:none;backdrop-filter:none;
+  box-shadow:0 20px 44px -14px rgba(0,0,0,.50),0 0 46px rgba(160,189,219,.18);
+}
+html body .call-main.glass::before{
+  background:linear-gradient(135deg,rgba(238,247,255,.56),rgba(160,189,219,.30) 55%,rgba(214,232,250,.42));
+}
+html body .call-main.glass > .lg-edge{
+  background:linear-gradient(135deg,rgba(255,255,255,.55),rgba(255,255,255,.06) 32%,rgba(255,255,255,.04) 62%,rgba(255,255,255,.40));
+}
+
+@media (max-width:700px){
+  html body .contact-card{min-height:88px;padding:12px 14px;gap:14px}
+  html body .icon-wrap{flex-basis:60px;width:60px;height:60px}
+  html body .icon-wrap img{width:34px;height:34px}
+  :root{--lg-edge:4.5px}
+}
+@media (max-width:360px){
+  html body .contact-card{min-height:80px;padding:10px 12px}
+  html body .icon-wrap{flex-basis:54px!important;width:54px!important;height:54px!important}
+}
+</style>
+
+<script id="lg-refract">
+/* Real glass refraction (the bezel bends what is behind it) for desktop Chromium browsers.
+   iPhone/Safari and phones keep the light-weight bezel look above. */
+(function(){
+  "use strict";
+  var ua=navigator.userAgent;
+  var ok=/Chrome\/\d+/.test(ua)&&!/Mobile|Android|CriOS|FxiOS/.test(ua)&&window.matchMedia&&matchMedia("(hover:hover) and (pointer:fine)").matches;
+  if(!ok)return;
+
+  var NS="http://www.w3.org/2000/svg",XL="http://www.w3.org/1999/xlink";
+  var svg=document.createElementNS(NS,"svg");
+  svg.setAttribute("width","0");svg.setAttribute("height","0");svg.setAttribute("aria-hidden","true");
+  svg.style.cssText="position:absolute;width:0;height:0;pointer-events:none";
+  var defs=document.createElementNS(NS,"defs");svg.appendChild(defs);document.body.appendChild(svg);
+
+  function radiusOf(el,w,h){
+    var r=parseFloat(getComputedStyle(el).borderTopLeftRadius)||0;
+    return Math.min(r,w/2,h/2);
+  }
+  function mapURL(w,h,r,b){
+    var c=document.createElement("canvas");c.width=w;c.height=h;
+    var ctx=c.getContext("2d"),im=ctx.createImageData(w,h),d=im.data;
+    for(var y=0;y<h;y++){for(var x=0;x<w;x++){
+      var px=x+.5-w/2,py=y+.5-h/2;
+      var qx=Math.abs(px)-(w/2-r),qy=Math.abs(py)-(h/2-r);
+      var ox=Math.max(qx,0),oy=Math.max(qy,0),len=Math.sqrt(ox*ox+oy*oy);
+      var depth=-(len+Math.min(Math.max(qx,qy),0)-r);
+      var vx=0,vy=0;
+      if(depth>0&&depth<b){
+        var nx,ny;
+        if(len>0){nx=ox/len*(px<0?-1:1);ny=oy/len*(py<0?-1:1);}
+        else if(qx>qy){nx=px<0?-1:1;ny=0;}else{nx=0;ny=py<0?-1:1;}
+        var t=1-depth/b,m=t*t;       // strongest right at the edge
+        vx=-nx*m;vy=-ny*m;           // look at what is further inside = lens magnification
+      }
+      var i=(y*w+x)*4;
+      d[i]=Math.round(128+127*vx);d[i+1]=Math.round(128+127*vy);d[i+2]=128;d[i+3]=255;
+    }}
+    ctx.putImageData(im,0,0);return c.toDataURL("image/png");
+  }
+
+  var MAXOFF=16, idn=0;
+  function setup(el){
+    var id="lgf"+(idn++),f=document.createElementNS(NS,"filter");
+    f.setAttribute("id",id);f.setAttribute("filterUnits","userSpaceOnUse");
+    f.setAttribute("color-interpolation-filters","sRGB");
+    var im=document.createElementNS(NS,"feImage");
+    im.setAttribute("preserveAspectRatio","none");im.setAttribute("result","map");
+    im.setAttribute("x","0");im.setAttribute("y","0");
+    var dm=document.createElementNS(NS,"feDisplacementMap");
+    dm.setAttribute("in","SourceGraphic");dm.setAttribute("in2","map");
+    dm.setAttribute("scale",String(MAXOFF*2));
+    dm.setAttribute("xChannelSelector","R");dm.setAttribute("yChannelSelector","G");
+    f.appendChild(im);f.appendChild(dm);defs.appendChild(f);
+
+    var timer=0,lw=0,lh=0;
+    function build(){
+      var w=Math.round(el.offsetWidth),h=Math.round(el.offsetHeight);
+      if(w<8||h<8||(w===lw&&h===lh))return;
+      lw=w;lh=h;
+      var r=radiusOf(el,w,h),b=Math.max(8,Math.min(26,Math.min(w,h)/2*.85));
+      var url=mapURL(w,h,r,b);
+      f.setAttribute("x","0");f.setAttribute("y","0");f.setAttribute("width",w);f.setAttribute("height",h);
+      im.setAttribute("width",w);im.setAttribute("height",h);
+      im.setAttribute("href",url);im.setAttributeNS(XL,"xlink:href",url);
+      el.style.setProperty("--lg-bf","url(#"+id+") blur(2.5px) saturate(135%) brightness(1.06)");
+    }
+    build();
+    if(window.ResizeObserver){
+      new ResizeObserver(function(){clearTimeout(timer);timer=setTimeout(build,120);}).observe(el);
+    }
+    window.addEventListener("load",build);
+  }
+  [].slice.call(document.querySelectorAll(".glass")).forEach(setup);
+})();
+</script>
 </body>
 </html>
