@@ -601,57 +601,32 @@ html .call-main:hover{
   // iOS Safari only enables touch states when a touch listener exists
   document.addEventListener("touchstart",function(){},{passive:true});
 
-  // Water ripples: waves spread from the cursor / finger instead of a light patch
+  // glass pieces: bezel layer + iOS-style press squish (no ripple effect)
   var els=[].slice.call(document.querySelectorAll(".glass,.call-main"));
-  var calm=window.matchMedia&&matchMedia("(prefers-reduced-motion: reduce)").matches;
   els.forEach(function(el){
-    var layer=document.createElement("span");
-    layer.className="lg-ripples";layer.setAttribute("aria-hidden","true");
     var edge=document.createElement("span");
     edge.className="lg-edge";edge.setAttribute("aria-hidden","true");
     el.appendChild(edge);
-    el.appendChild(layer);
-    var t=0,lx=-999,ly=-999,lt=0;
-
-    function splash(e,big){ if(window.__lgWater) window.__lgWater.drop(e.clientX,e.clientY,big); }
-    function pos(e){var r=el.getBoundingClientRect();return {x:e.clientX-r.left,y:e.clientY-r.top,w:r.width,h:r.height};}
-    function ripple(p,big){
-      if(calm)return;
-      var d=big?Math.min(700,Math.max(p.w,p.h)*1.4):170;
-      var s=document.createElement("span");
-      s.className="lg-ripple"+(big?" is-big":"");
-      s.style.left=p.x+"px";s.style.top=p.y+"px";
-      s.style.width=d+"px";s.style.height=d+"px";
-      s.style.marginLeft=(-d/2)+"px";s.style.marginTop=(-d/2)+"px";
-      s.addEventListener("animationend",function(){if(s.parentNode)s.parentNode.removeChild(s);});
-      while(layer.children.length>=7)layer.removeChild(layer.firstChild);
-      layer.appendChild(s);
-    }
-    function move(e){
-      var p=pos(e),now=performance.now();
-      if(Math.hypot(p.x-lx,p.y-ly)>34&&now-lt>110){lx=p.x;ly=p.y;lt=now;ripple(p,false);splash(e,false);}
-    }
+    var t=0;
     function release(){clearTimeout(t);t=setTimeout(function(){el.classList.remove("is-pressed");},140);}
-
-    el.addEventListener("pointerenter",function(e){if(e.pointerType==="mouse"){var p=pos(e);lx=p.x;ly=p.y;lt=performance.now();ripple(p,false);splash(e,false);}},{passive:true});
-    el.addEventListener("pointermove",move,{passive:true});
-    el.addEventListener("pointerdown",function(e){clearTimeout(t);el.classList.add("is-pressed");var p=pos(e);lx=p.x;ly=p.y;lt=performance.now();ripple(p,true);splash(e,true);},{passive:true});
+    el.addEventListener("pointerdown",function(){clearTimeout(t);el.classList.add("is-pressed");},{passive:true});
     ["pointerup","pointercancel","pointerleave"].forEach(function(n){el.addEventListener(n,release,{passive:true});});
   });
 
   // Top bar gets a touch more body once content slides under it
   var nav=document.querySelector(".nav"),tick=false;
-  var lastY=window.scrollY||0;
+  var quote=document.querySelector(".quote-section");
   function onScroll(){
     tick=false;if(!nav)return;
-    var y=Math.max(0,window.scrollY),d=y-lastY;
+    var y=Math.max(0,window.scrollY);
     nav.classList.toggle("is-scrolled",y>10);
-    if(y<=10){nav.classList.remove("nav-hidden");}          // at the top: always visible
-    else if(d>4){nav.classList.add("nav-hidden");}           // scrolling down: fade out
-    else if(d<-4){nav.classList.remove("nav-hidden");}       // scrolling up: fade back in
-    lastY=y;
+    // bar stays while the quote card is on screen; once you scroll below it, the bar fades away
+    var past=false;
+    if(quote){past=quote.getBoundingClientRect().bottom<110;}
+    nav.classList.toggle("nav-hidden",past);
   }
   window.addEventListener("scroll",function(){if(!tick){tick=true;requestAnimationFrame(onScroll);}},{passive:true});
+  window.addEventListener("resize",function(){if(!tick){tick=true;requestAnimationFrame(onScroll);}},{passive:true});
   onScroll();
 })();
 </script>
@@ -814,182 +789,7 @@ html body .call-main{
   background:linear-gradient(135deg,rgba(228,242,255,.55),rgba(160,189,219,.40));
 }
 
-/* Water-wave layer, clipped to each element's rounded shape */
-html body .lg-ripples{
-  position:absolute;inset:0;border-radius:inherit;overflow:hidden;
-  pointer-events:none;z-index:2;
-  -webkit-transform:translateZ(0);transform:translateZ(0);
-  -webkit-mask-image:-webkit-radial-gradient(white,black);
-}
-html body .glass > .lg-ripples{position:absolute}
-.lg-ripple{
-  position:absolute;border-radius:50%;pointer-events:none;
-  background:radial-gradient(circle closest-side,
-    rgba(255,255,255,0) 0%, rgba(255,255,255,0) 40%,
-    rgba(255,255,255,.30) 50%, rgba(255,255,255,.05) 56%,
-    rgba(0,0,0,.07) 60%, rgba(255,255,255,0) 66%, rgba(255,255,255,0) 68%,
-    rgba(255,255,255,.20) 78%, rgba(255,255,255,.04) 84%,
-    rgba(255,255,255,0) 90%, rgba(255,255,255,0) 100%);
-  transform:scale(.08);opacity:1;will-change:transform,opacity;
-  animation:lgWave 1.5s cubic-bezier(.18,.6,.3,1) forwards;
-}
-.lg-ripple.is-big{animation-duration:1.9s}
-@keyframes lgWave{
-  0%{transform:scale(.08);opacity:.95}
-  70%{opacity:.5}
-  100%{transform:scale(1);opacity:0}
-}
-@media (prefers-reduced-motion:reduce){.lg-ripples{display:none}}
 </style>
-
-<style id="water-3d">
-#waterGL{position:absolute;inset:0;width:100%;height:100%;display:block;opacity:0;transition:opacity .45s ease;pointer-events:none}
-#waterGL.on{opacity:1}
-
-/* in-element rings: lit from the top-left (bright crest on one side, shadow on the other) and tilted in perspective */
-.lg-ripple{
-  background:
-    radial-gradient(circle closest-side at 46.5% 46.5%,
-      rgba(255,255,255,0) 0%,rgba(255,255,255,0) 44%,rgba(255,255,255,.70) 50%,rgba(255,255,255,0) 57%,
-      rgba(255,255,255,0) 64%,rgba(255,255,255,.42) 72%,rgba(255,255,255,0) 79%,rgba(255,255,255,0) 100%),
-    radial-gradient(circle closest-side at 53.5% 53.5%,
-      rgba(0,0,0,0) 0%,rgba(0,0,0,0) 44%,rgba(0,0,0,.30) 50%,rgba(0,0,0,0) 57%,
-      rgba(0,0,0,0) 64%,rgba(0,0,0,.20) 72%,rgba(0,0,0,0) 79%,rgba(0,0,0,0) 100%);
-  animation:lgWave3d 1.6s cubic-bezier(.18,.6,.3,1) forwards;
-}
-.lg-ripple.is-big{animation-duration:2s}
-@keyframes lgWave3d{
-  0%{transform:perspective(520px) rotateX(26deg) scale(.08);opacity:.95}
-  65%{opacity:.55}
-  100%{transform:perspective(520px) rotateX(26deg) scale(1);opacity:0}
-}
-</style>
-
-<script id="water-gl">
-(function(){
-  "use strict";
-  if(window.matchMedia&&matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-  var wrap=document.querySelector(".bg-video"), vid=document.getElementById("bgVideo");
-  if(!wrap) return;
-
-  var cv=document.createElement("canvas"); cv.id="waterGL"; cv.setAttribute("aria-hidden","true");
-  var gl=null;
-  try{ gl=cv.getContext("webgl",{alpha:false,antialias:false,depth:false,stencil:false,powerPreference:"low-power"})||cv.getContext("experimental-webgl"); }catch(_){}
-  if(!gl) return;
-
-  var VS="attribute vec2 aPos;varying vec2 vUv;void main(){vUv=aPos*.5+.5;gl_Position=vec4(aPos,0.,1.);}";
-  var FS=[
-    "#ifdef GL_FRAGMENT_PRECISION_HIGH","precision highp float;","#else","precision mediump float;","#endif",
-    "uniform sampler2D uTex;uniform vec2 uCss;uniform float uTexAspect;uniform vec4 uDrops[8];varying vec2 vUv;",
-    "vec2 cover(vec2 uv){float ca=uCss.x/uCss.y;vec2 s=ca>uTexAspect?vec2(1.0,uTexAspect/ca):vec2(ca/uTexAspect,1.0);return (uv-0.5)*s+0.5;}",
-    "void main(){",
-    "  vec2 uvT=vec2(vUv.x,1.0-vUv.y);",
-    "  vec2 p=uvT*uCss; vec2 grad=vec2(0.0);",
-    "  for(int i=0;i<8;i++){",
-    "    vec4 dr=uDrops[i];",
-    "    if(dr.w>0.0){",
-    "      vec2 d=p-dr.xy; float r=length(d)+0.001;",
-    "      float x=r-dr.z*300.0; float w=54.0; float k=0.10;",
-    "      float env=exp(-(x*x)/(2.0*w*w));",
-    "      float att=dr.w*exp(-dr.z*1.05)/(1.0+r*0.009);",
-    "      float s=sin(k*x); float c=cos(k*x);",
-    "      float dh=att*env*(k*c-s*x/(w*w));",
-    "      grad+=dh*d/r;",
-    "    }",
-    "  }",
-    "  vec2 t=cover(uvT+grad*105.0/uCss); t.y=1.0-t.y;",
-    "  vec3 col=texture2D(uTex,t).rgb;",
-    "  vec3 n=normalize(vec3(-grad*8.0,1.0));",
-    "  vec3 L=normalize(vec3(-0.45,-0.55,0.70));",
-    "  float diff=dot(n,L)-L.z;",
-    "  vec3 H=normalize(L+vec3(0.0,0.0,1.0));",
-    "  float spec=pow(max(dot(n,H),0.0),70.0);",
-    "  col+=diff*0.60+spec*vec3(0.80,0.90,1.0)*0.60;",
-    "  gl_FragColor=vec4(col,1.0);",
-    "}"
-  ].join("\n");
-
-  function sh(type,src){var o=gl.createShader(type);gl.shaderSource(o,src);gl.compileShader(o);
-    if(!gl.getShaderParameter(o,gl.COMPILE_STATUS)){throw new Error(gl.getShaderInfoLog(o));}return o;}
-  var prog,uTex,uCss,uAsp,uDr,tex,posterImg,lastSrc=null,drops=[],raf=0,dead=false,SCALE=1;
-
-  function die(){
-    dead=true; if(raf)cancelAnimationFrame(raf);
-    if(cv.parentNode)cv.parentNode.removeChild(cv);
-    window.__lgWater=null; document.documentElement.classList.remove("water-gl");
-  }
-
-  try{
-    prog=gl.createProgram();
-    gl.attachShader(prog,sh(gl.VERTEX_SHADER,VS)); gl.attachShader(prog,sh(gl.FRAGMENT_SHADER,FS));
-    gl.linkProgram(prog);
-    if(!gl.getProgramParameter(prog,gl.LINK_STATUS))throw new Error(gl.getProgramInfoLog(prog));
-    gl.useProgram(prog);
-    var buf=gl.createBuffer(); gl.bindBuffer(gl.ARRAY_BUFFER,buf);
-    gl.bufferData(gl.ARRAY_BUFFER,new Float32Array([-1,-1,1,-1,-1,1,1,1]),gl.STATIC_DRAW);
-    var aPos=gl.getAttribLocation(prog,"aPos"); gl.enableVertexAttribArray(aPos); gl.vertexAttribPointer(aPos,2,gl.FLOAT,false,0,0);
-    uTex=gl.getUniformLocation(prog,"uTex"); uCss=gl.getUniformLocation(prog,"uCss");
-    uAsp=gl.getUniformLocation(prog,"uTexAspect"); uDr=gl.getUniformLocation(prog,"uDrops[0]");
-    tex=gl.createTexture(); gl.bindTexture(gl.TEXTURE_2D,tex);
-    gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL,true);
-    gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_S,gl.CLAMP_TO_EDGE);
-    gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_T,gl.CLAMP_TO_EDGE);
-    gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MIN_FILTER,gl.LINEAR);
-    gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MAG_FILTER,gl.LINEAR);
-    gl.uniform1i(uTex,0);
-  }catch(err){ return; }   // shader problem: keep the in-element ripples only
-
-  posterImg=new Image(); posterImg.src="bg-poster.jpg";
-  wrap.insertBefore(cv, vid? vid.nextSibling : null);
-  cv.addEventListener("webglcontextlost",function(e){e.preventDefault();die();});
-
-  function source(){
-    if(vid&&vid.readyState>=2&&vid.videoWidth) return {el:vid,w:vid.videoWidth,h:vid.videoHeight,live:true};
-    if(posterImg.complete&&posterImg.naturalWidth) return {el:posterImg,w:posterImg.naturalWidth,h:posterImg.naturalHeight,live:false};
-    return null;
-  }
-  function size(){
-    var r=wrap.getBoundingClientRect(), dpr=window.devicePixelRatio||1;
-    SCALE=Math.min(1,Math.max(.6,dpr*.6));
-    var w=Math.max(2,Math.round(r.width*SCALE)), h=Math.max(2,Math.round(r.height*SCALE));
-    if(cv.width!==w||cv.height!==h){cv.width=w;cv.height=h;gl.viewport(0,0,w,h);}
-    gl.uniform2f(uCss,r.width,r.height);
-  }
-
-  var LIFE=2800, buf32=new Float32Array(32);
-  function frame(now){
-    raf=0; if(dead)return;
-    drops=drops.filter(function(d){return now-d.t0<LIFE;});
-    if(!drops.length){ cv.classList.remove("on"); return; }
-    var src=source(); if(!src){ raf=requestAnimationFrame(frame); return; }
-    try{
-      size();
-      gl.bindTexture(gl.TEXTURE_2D,tex);
-      if(src.live||lastSrc!==src.el){ gl.texImage2D(gl.TEXTURE_2D,0,gl.RGBA,gl.RGBA,gl.UNSIGNED_BYTE,src.el); lastSrc=src.el; }
-      gl.uniform1f(uAsp,src.w/src.h);
-      buf32.fill(0);
-      for(var i=0;i<drops.length&&i<8;i++){
-        var d=drops[i]; buf32[i*4]=d.x; buf32[i*4+1]=d.y; buf32[i*4+2]=(now-d.t0)/1000; buf32[i*4+3]=d.a;
-      }
-      gl.uniform4fv(uDr,buf32);
-      gl.drawArrays(gl.TRIANGLE_STRIP,0,4);
-      cv.classList.add("on");
-    }catch(err){ die(); return; }   // e.g. browser blocks reading the video/image into WebGL
-    raf=requestAnimationFrame(frame);
-  }
-
-  window.__lgWater={
-    drop:function(x,y,big){
-      if(dead)return;
-      var wr=wrap.getBoundingClientRect();
-      drops.push({x:x-wr.left,y:y-wr.top,t0:performance.now(),a:big?1:.62});
-      if(drops.length>8)drops.shift();
-      if(!raf)raf=requestAnimationFrame(frame);
-    }
-  };
-  document.documentElement.classList.add("water-gl");
-})();
-</script>
 
 <style id="liquid-glass-v2">
 /* ============ 1) background never cuts off when the phone toolbar moves ============
@@ -1125,7 +925,7 @@ html body .call-main.glass > .lg-edge{
     ctx.putImageData(im,0,0);return c.toDataURL("image/png");
   }
 
-  var MAXOFF=16, idn=0;
+  var MAXOFF=26, idn=0;
   function setup(el){
     var id="lgf"+(idn++),f=document.createElementNS(NS,"filter");
     f.setAttribute("id",id);f.setAttribute("filterUnits","userSpaceOnUse");
@@ -1144,7 +944,7 @@ html body .call-main.glass > .lg-edge{
       var w=Math.round(el.offsetWidth),h=Math.round(el.offsetHeight);
       if(w<8||h<8||(w===lw&&h===lh))return;
       lw=w;lh=h;
-      var r=radiusOf(el,w,h),b=Math.max(8,Math.min(26,Math.min(w,h)/2*.85));
+      var r=radiusOf(el,w,h),b=Math.max(10,Math.min(26,Math.min(w,h)/2*.8));
       var url=mapURL(w,h,r,b);
       f.setAttribute("x","0");f.setAttribute("y","0");f.setAttribute("width",w);f.setAttribute("height",h);
       im.setAttribute("width",w);im.setAttribute("height",h);
@@ -1208,16 +1008,15 @@ html.rim-gl .glass > .lg-edge{display:none}
     "  vec2 sg=vec2(c.x<0.0?-1.0:1.0,c.y<0.0?-1.0:1.0);",
     "  vec2 n;",
     "  if(q.x>0.0&&q.y>0.0){n=normalize(q)*sg;}else if(q.x>q.y){n=vec2(sg.x,0.0);}else{n=vec2(0.0,sg.y);}",
-    "  float t=clamp(1.0-depth/b,0.0,1.0); float m=t*t;",
-    "  vec2 pv=vP+uOrigin; vec2 off=-n*m*b*1.1;",
-    "  vec3 col; col.r=bg(pv+off*1.14).r; col.g=bg(pv+off).g; col.b=bg(pv+off*0.86).b;",
-    "  col*=0.70;",
+    "  float t=clamp(1.0-depth/b,0.0,1.0); float m=t*t*(0.55+0.45*t);",
+    "  vec2 pv=vP+uOrigin; vec2 off=-n*m*b*2.2;",
+    "  vec3 col; col.r=bg(pv+off*1.12).r; col.g=bg(pv+off).g; col.b=bg(pv+off*0.88).b;",
+    "  col=mix(col,vec3(0.80,0.88,0.98),0.36+0.22*t);",
     "  float lit=dot(n,normalize(vec2(-0.6,-0.8)));",
-    "  col+=t*t*t*(max(lit,0.0)*0.60+max(-lit,0.0)*0.26);",
-    "  col+=(1.0-smoothstep(0.0,1.6,depth))*(0.22+0.50*max(lit,0.0));",
-    "  col=col*1.15+0.03*t;",
-    "  float a=(1.0-smoothstep(0.30,1.0,depth/b))*smoothstep(-1.0,0.6,depth);",
-    "  a*=0.92;",
+    "  col+=t*t*(max(lit,0.0)*0.30+max(-lit,0.0)*0.12);",
+    "  col+=(1.0-smoothstep(0.0,2.0,depth))*(0.05+0.14*max(lit,0.0));",
+    "  float a=pow(1.0-smoothstep(0.0,1.0,depth/b),1.7)*smoothstep(-1.0,1.2,depth);",
+    "  a*=0.66;",
     "  gl_FragColor=vec4(col*a,a);",
     "}"
   ].join("\n");
@@ -1297,7 +1096,7 @@ html.rim-gl .glass > .lg-edge{display:none}
         if(it2.cv.width!==cw||it2.cv.height!==ch){it2.cv.width=cw;it2.cv.height=ch;}
         var m=Math.min(o.w,o.h);
         var rad=Math.min(it2.rad0,o.w/2,o.h/2);
-        var b=it2.icon?11:it2.doctor?9:Math.max(10,Math.min(16,m*.26));
+        var b=it2.icon?13:it2.doctor?11:Math.max(12,Math.min(19,m*.30));
         gl.viewport(0,0,cw,ch); gl.scissor(0,0,cw,ch);
         gl.clearColor(0,0,0,0); gl.clear(gl.COLOR_BUFFER_BIT);
         gl.uniform2f(L.uCss,o.w,o.h);
@@ -1318,5 +1117,78 @@ html.rim-gl .glass > .lg-edge{display:none}
   raf=requestAnimationFrame(frame);
 })();
 </script>
+
+<style id="polish-v3">
+/* ===== softer, rounder, more lens-like edges ===== */
+:root{--lg-edge:4.5px}
+html body .glass::after{
+  box-shadow:
+    inset 0 0 0 1px rgba(255,255,255,.12),
+    inset 3px 5px 12px -4px rgba(255,255,255,.50),
+    inset -3px -5px 12px -4px rgba(255,255,255,.28),
+    inset 0 0 14px rgba(255,255,255,.06),
+    inset 0 0 0 7px rgba(255,255,255,.02);
+}
+html body .glass > .lg-edge{
+  background:linear-gradient(135deg,rgba(255,255,255,.20),rgba(255,255,255,.03) 38%,rgba(255,255,255,.015) 62%,rgba(255,255,255,.15));
+  -webkit-backdrop-filter:blur(2px) saturate(130%) brightness(1.10);
+  backdrop-filter:blur(2px) saturate(130%) brightness(1.10);
+}
+html body .call-main.glass > .lg-edge{
+  background:linear-gradient(135deg,rgba(255,255,255,.34),rgba(255,255,255,.05) 38%,rgba(255,255,255,.03) 62%,rgba(255,255,255,.24));
+}
+html body .icon-wrap{
+  box-shadow:
+    inset 0 0 0 1px rgba(255,255,255,.26),
+    inset 3px 4px 9px -3px rgba(255,255,255,.60),
+    inset -3px -4px 10px -3px rgba(255,255,255,.34),
+    inset 0 0 16px rgba(255,255,255,.12),
+    0 8px 20px rgba(0,0,0,.26);
+}
+html body .quote-card{border-radius:40px}
+html body .contact-card{border-radius:999px}
+
+/* ===== phones: inner frost matched to the (thicker, softer) bezel ===== */
+@media (max-width:700px){
+  :root{--lg-edge:4px}
+  html body .glass::before{
+    background:linear-gradient(135deg,rgba(255,255,255,.075),rgba(255,255,255,.015) 45%,rgba(255,255,255,.05));
+    -webkit-backdrop-filter:var(--lg-bf,blur(6px) saturate(165%) brightness(1.04));
+    backdrop-filter:var(--lg-bf,blur(6px) saturate(165%) brightness(1.04));
+    box-shadow:inset 0 0 20px rgba(255,255,255,.05),inset 0 0 0 7px rgba(255,255,255,.02);
+  }
+  html body .call-main.glass::before{
+    background:linear-gradient(135deg,rgba(238,247,255,.44),rgba(160,189,219,.24) 55%,rgba(214,232,250,.34));
+  }
+  html body .icon-wrap{
+    -webkit-backdrop-filter:blur(3px) saturate(200%) brightness(1.10);
+    backdrop-filter:blur(3px) saturate(200%) brightness(1.10);
+  }
+}
+
+/* ===== top bar: slower, softer fade when it leaves ===== */
+html body .nav.nav-hidden{transition:transform .5s ease-in,visibility 0s .5s}
+html body .nav.nav-hidden::before{transition:--nav-tint 1.6s cubic-bezier(.4,0,.2,1),opacity .5s ease-out}
+html body .nav.nav-hidden::after,
+html body .nav.nav-hidden > *{transition:opacity .5s ease-out}
+
+/* ===== footer: lower on the page, Telegram logo beside the credit ===== */
+html body footer{
+  display:flex;align-items:center;justify-content:center;gap:12px;
+  margin-top:clamp(90px,16vh,170px);
+  padding-bottom:calc(46px + env(safe-area-inset-bottom,0px));
+}
+html body footer img{width:30px;height:30px;flex:0 0 30px;object-fit:contain;opacity:.9}
+html body footer > div{display:flex;flex-direction:column;align-items:flex-start;gap:2px;text-align:start}
+
+/* ===== stable background on phones: size from the LARGE viewport (never changes while the toolbar moves) ===== */
+html,body{overscroll-behavior-y:none}
+html body .bg-video,html body::before,html body .grain{
+  inset:-140px 0 auto 0;width:100%;
+  height:calc(100vh + 420px);height:calc(100lvh + 420px);
+  -webkit-transform:translate3d(0,0,0);transform:translate3d(0,0,0);
+  backface-visibility:hidden;-webkit-backface-visibility:hidden;
+}
+</style>
 </body>
 </html>
